@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/api")
 public class CustomerController {
     @Autowired
     private final customerService customerService;
@@ -23,12 +23,13 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/addCustomer")
     public Customer createCustomer(@RequestBody Customer customer) throws CustomerAlreadyExists {
         return customerService.addCustomer(customer);
     }
 
-    @GetMapping("/{id}")
+
+    @GetMapping("/getCustomer/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable(value = "id") Integer id) {
         Customer customer = customerService.getCustomer(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found for this id :: " + id));

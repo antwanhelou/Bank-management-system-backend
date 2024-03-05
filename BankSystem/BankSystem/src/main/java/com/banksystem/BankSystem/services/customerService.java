@@ -42,11 +42,20 @@ public class customerService {
         return customerRepo.save(customer);
     }
     @Transactional
+    public Customer getCustomerWithAccounts(Integer customerId) {
+        Customer customer = customerRepo.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found for this id :: " + customerId));
+        customer.getAccounts().size(); // Access the accounts to trigger their loading
+        return customer;
+    }
+
+    @Transactional
     public void deleteCustomer(Integer id) {
         Customer customer = customerRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found for this id :: " + id));
         customerRepo.delete(customer);
     }
+
     public List<Customer> getAllCustomers() {
         return customerRepo.findAll();
     }

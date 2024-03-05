@@ -1,8 +1,8 @@
 package com.banksystem.BankSystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +11,9 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Builder
+@Builder(toBuilder = true)
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Table(name="Accounts")
 public class Account {
 
@@ -23,10 +25,11 @@ public class Account {
     private String accountNumber;
 
     //  private String type;
-    // private String status;
     @Column
-    private float balance;
-
-    @ManyToMany(mappedBy = "accounts")
+     private String status;
+    @Column
+    private double balance;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToMany(mappedBy = "accounts", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Customer> customers = new HashSet<>();
 }
