@@ -1,26 +1,28 @@
 package com.banksystem.BankSystem.controllers;
 
-import com.banksystem.BankSystem.entities.Account;
+import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.banksystem.BankSystem.services.*;
 
-    @RestController
+import java.util.UUID;
+
+@RestController
     @RequestMapping("/api")
     public class AccountController {
         @Autowired
-        private  accountService accountService;
+        private BankAccountService bankAccountService;
         @Autowired
-        private  customerService customerService;
+        private CustomerService customerService;
 
 
 
 
         @PostMapping("/addAccount/{customerId}")
-        public ResponseEntity<Account> createAccountForCustomer(@PathVariable Integer customerId, @RequestBody Account account) {
-            Account newAccount = accountService.createAccountForCustomer(account, customerId);
-            return ResponseEntity.ok(newAccount);
+        public ResponseEntity<BankAccount> createAccountForCustomer(@PathVariable UUID customerId, @RequestBody BankAccount bankAccount) {
+            BankAccount newBankAccount = bankAccountService.createAccountForCustomer(bankAccount, customerId);
+            return ResponseEntity.ok(newBankAccount);
         }
 }

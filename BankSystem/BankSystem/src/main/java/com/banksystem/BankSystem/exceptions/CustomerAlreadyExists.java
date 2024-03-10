@@ -1,4 +1,4 @@
-package exceptions;
+package com.banksystem.BankSystem.exceptions;
 
 public class CustomerAlreadyExists extends  Exception{
 
