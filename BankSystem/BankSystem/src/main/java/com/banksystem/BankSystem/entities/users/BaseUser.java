@@ -5,21 +5,22 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Data
-@Builder(toBuilder = true)
+
 @MappedSuperclass
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "name", "email"})
-public abstract class BaseUser {
+abstract public  class BaseUser implements Serializable{
     @Id
+
     @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", parameters = {
-            @org.hibernate.annotations.Parameter (name = "uuid_gen_strategy_class", value = "org.hibernate.id.uuid.CustomVersionOneStrategy")})
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(nullable = false)
     private UUID id;
 

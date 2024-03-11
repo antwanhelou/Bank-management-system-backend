@@ -20,8 +20,7 @@ public class Transaction {
 
     @Id
     @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", parameters = {
-            @org.hibernate.annotations.Parameter (name = "uuid_gen_strategy_class", value = "org.hibernate.id.uuid.CustomVersionOneStrategy")})
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(nullable = false, name = "transaction_id")
     private UUID id;
 

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface CreditCardRepository<T> extends JpaRepository<T, UUID> {
+public interface CreditCardRepository<T extends CreditCard> extends JpaRepository<T, UUID> {
 
 
 //    @Query("SELECT card FROM ")

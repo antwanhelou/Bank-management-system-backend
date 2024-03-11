@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface BaseUserRepository<T> extends JpaRepository<T, UUID> {
+public interface BaseUserRepository<T extends BaseUser> extends JpaRepository<T, UUID> {
 }

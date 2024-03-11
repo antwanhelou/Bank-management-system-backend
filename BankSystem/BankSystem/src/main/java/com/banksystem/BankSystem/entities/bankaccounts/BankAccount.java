@@ -12,7 +12,7 @@ import java.util.*;
 
 @Data
 @Entity
-@Builder(toBuilder = true)
+
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Table(name="bank_accounts")
@@ -22,8 +22,7 @@ public abstract class BankAccount {
 
     @Id
     @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", parameters = {
-            @org.hibernate.annotations.Parameter (name = "uuid_gen_strategy_class", value = "org.hibernate.id.uuid.CustomVersionOneStrategy")})
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(nullable = false, name = "account_id")
     private  UUID id;
 
@@ -46,7 +45,7 @@ public abstract class BankAccount {
     private String branchCode;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToMany(mappedBy = "accounts", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "bankAccounts", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Customer> customers;
 
 
