@@ -17,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CustomerService extends BaseUserService<Customer> {
@@ -33,24 +30,11 @@ public class CustomerService extends BaseUserService<Customer> {
     @Autowired
     private EmailService emailService;
 
-// Inside a method
 
-    public List<Customer> findAllCustomers() {
-        return customerRepository.findAll();
-    }
     public ResponseEntity<Map<String, String>> addCustomer(UserCredentialsDTO userCredentialsDTO) {
         Customer customer = Customer.builder().build();
         emailService.sendWelcomeMessage(Customer.builder().build().getEmail(), "Welcome!","welcome to antwan and hussam");
         return this.registerUser(userCredentialsDTO, customer);
-    }
-//    public Customer updateCustomer(UUID id, Customer customerDetails) {
-//    }
-    @Transactional
-    public Customer getCustomerWithAccounts(UUID customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found for this id :: " + customerId));
-        customer.getBankAccounts().size(); // Access the accounts to trigger their loading
-        return customer;
     }
 
     @Transactional
