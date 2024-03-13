@@ -15,15 +15,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 
-@Table(name="credit_card")
 public class VisaCard extends CreditCard {
 
 
     @Column(nullable = false)
-    private String expireMonth;
+    private String expirationMonth;
 
     @Column(nullable = false)
-    private String expireYear;
+    private String expirationYear;
 
     @Column(nullable = false)
     private String CVV;

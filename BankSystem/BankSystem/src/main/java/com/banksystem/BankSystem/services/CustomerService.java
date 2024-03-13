@@ -1,18 +1,25 @@
 package com.banksystem.BankSystem.services;
 
+import com.banksystem.BankSystem.DTOs.CustomerDTO;
+import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
 import com.banksystem.BankSystem.entities.users.Customer;
+import com.banksystem.BankSystem.exceptions.UserNotFoundException;
+import com.banksystem.BankSystem.repository.BaseUserRepository;
 import com.banksystem.BankSystem.repository.CustomerRepository;
-import com.banksystem.BankSystem.exceptions.CustomerAlreadyExists;
+import com.banksystem.BankSystem.utilities.ResultHolder;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class CustomerService {
+public class CustomerService extends BaseUserService<Customer> {
 
 
 
@@ -21,27 +28,12 @@ public class CustomerService {
 
 
 
-    @Transactional
-    public Customer addCustomer(Customer customer) throws CustomerAlreadyExists {
-
-        if(customer.getId()!=null && this.customerRepository.existsById(customer.getId()))
-        {
-            throw new CustomerAlreadyExists("Author with id "+customer.getId()+" already exists");
-        }
-
-
-        return this.customerRepository.save(customer);
+    public ResponseEntity<Map<String, String>> addCustomer(UserCredentialsDTO userCredentialsDTO) {
+        Customer customer = Customer.builder().build();
+        return this.registerUser(userCredentialsDTO, customer);
     }
-    @Transactional
-    public Customer updateCustomer(UUID id, Customer customerDetails) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found for this id :: " + id));
-
-        customer.setName(customerDetails.getName());
-        customer.setEmail(customerDetails.getEmail());
-        customer.setAddress(customerDetails.getAddress());
-        return customerRepository.save(customer);
-    }
+//    public Customer updateCustomer(UUID id, Customer customerDetails) {
+//    }
     @Transactional
     public Customer getCustomerWithAccounts(UUID customerId) {
         Customer customer = customerRepository.findById(customerId)
@@ -60,7 +52,19 @@ public class CustomerService {
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }
-    public Optional<Customer> getCustomer(UUID id) {
-        return customerRepository.findById(id);
+//    public Optional<Customer> getCustomer(UUID id) {
+//        return customerRepository.findById(id);
+//    }
+
+    @Override
+    protected BaseUserRepository<Customer> getUserRepository() {
+        return customerRepository;
+    }
+
+    public ResponseEntity<CustomerDTO> getCustomer(final UUID id) throws UserNotFoundException {
+        final Customer customer = getUser(id);
+        CustomerDTO customerDTO = CustomerDTO.builder().build();
+        customerDTO.set(customer);
+        return new ResponseEntity<>(customerDTO, HttpStatus.OK);
     }
 }

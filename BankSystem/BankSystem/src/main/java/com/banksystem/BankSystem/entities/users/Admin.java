@@ -2,10 +2,9 @@ package com.banksystem.BankSystem.entities.users;
 
 
 import com.banksystem.BankSystem.enums.AdminRole;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,11 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "admins")
-
+@Builder
 public class Admin extends BaseUser{
 
 
-    @Column
+    @Enumerated(EnumType.STRING)
     private AdminRole adminRole;
 
 }

@@ -2,10 +2,7 @@ package com.banksystem.BankSystem.entities.creditcards;
 
 import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
@@ -14,19 +11,21 @@ import java.util.UUID;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
+@EqualsAndHashCode(of = {"id"})
 
 public abstract class CreditCard {
 
     @Id
     @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2") @Column(nullable = false)
+    @GenericGenerator(name = "uuid2", type = org.hibernate.id.uuid.UuidGenerator.class)
+    @Column(nullable = false)
     private UUID id;
 
     @Column(nullable = false)
     private String cardNumber;
 
     @Column(nullable = false)
-    private long creditLimit;
+    private double creditLimit;
 
     @ManyToOne
     @JoinColumn(
