@@ -28,6 +28,9 @@ abstract public class BaseUser implements Serializable{
     private String name;
 
     @Column
+    private String email;
+
+    @Column
     private String address;
 
     @Column
