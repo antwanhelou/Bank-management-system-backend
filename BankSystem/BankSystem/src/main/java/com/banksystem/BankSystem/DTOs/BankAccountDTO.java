@@ -4,11 +4,19 @@ import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import com.banksystem.BankSystem.entities.creditcards.CreditCard;
 import com.banksystem.BankSystem.entities.transactions.Transaction;
 import com.banksystem.BankSystem.enums.AccountStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
 public class BankAccountDTO {
 
     private UUID id;

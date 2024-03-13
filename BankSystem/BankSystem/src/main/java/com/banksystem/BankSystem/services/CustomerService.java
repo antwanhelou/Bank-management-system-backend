@@ -1,9 +1,12 @@
 package com.banksystem.BankSystem.services;
 
+import com.banksystem.BankSystem.DTOs.BankAccountDTO;
 import com.banksystem.BankSystem.DTOs.BaseUserDTO;
 import com.banksystem.BankSystem.DTOs.CustomerDTO;
 import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
+import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import com.banksystem.BankSystem.entities.users.Customer;
+import com.banksystem.BankSystem.exceptions.BankAccountNotFoundException;
 import com.banksystem.BankSystem.exceptions.UserNotFoundException;
 import com.banksystem.BankSystem.repository.BaseUserRepository;
 import com.banksystem.BankSystem.repository.CustomerRepository;
@@ -49,7 +52,6 @@ public class CustomerService extends BaseUserService<Customer> {
     public ResponseEntity<Iterable<CustomerDTO>> getAllCustomer(){
         Iterable<Customer> customers = this.getAllUsers();
         List<CustomerDTO> customerDTOS = new ArrayList<>();
-
         for(Customer customer: customers){
             CustomerDTO customerDTO = CustomerDTO.builder().build();
             customerDTO.set(customer);
@@ -58,6 +60,23 @@ public class CustomerService extends BaseUserService<Customer> {
         return new ResponseEntity<>(customerDTOS, HttpStatus.OK);
     }
 
+    public ResponseEntity<Iterable<BankAccountDTO>> getCustomerBankAccounts(final UUID customerID) throws UserNotFoundException {
+        Optional<Customer> searchResult = this.getUserRepository().findById(customerID);
+        if(searchResult.isEmpty()){
+            throw new UserNotFoundException("Provided Customer ID does not match any customer");
+        }
+        Customer customer = searchResult.get();
+        List<BankAccountDTO> bankAccountDTOS = new ArrayList<>();
+        for(BankAccount bankAccount: customer.getBankAccounts()){
+            BankAccountDTO bankAccountDTO = BankAccountDTO.builder().build();
+            bankAccountDTO.set(bankAccount);
+            bankAccountDTOS.add(bankAccountDTO);
+        }
+
+        return new ResponseEntity<>(bankAccountDTOS, HttpStatus.OK);
+
+
+    }
 
     @Override
     protected BaseUserRepository<Customer> getUserRepository() {
