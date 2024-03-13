@@ -11,7 +11,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Builder
 public class BaseUserDTO {
 
     private UUID id;
@@ -24,6 +23,8 @@ public class BaseUserDTO {
 
     private boolean isVerified;
 
+    private String phoneNumber;
+
 
     public void set(BaseUser baseUser){
         this.id = baseUser.getId();
@@ -31,6 +32,7 @@ public class BaseUserDTO {
         this.email = baseUser.getUserCredentials().getEmail();
         this.address = baseUser.getAddress();
         this.isVerified = baseUser.isVerified();
+        this.phoneNumber = baseUser.getPhoneNumber();
     }
 
 }

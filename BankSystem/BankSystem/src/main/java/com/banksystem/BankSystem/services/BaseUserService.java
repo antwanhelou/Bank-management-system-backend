@@ -4,6 +4,7 @@ import com.banksystem.BankSystem.DTOs.BaseUserDTO;
 import com.banksystem.BankSystem.DTOs.NewUserCredentialsDTO;
 import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
 import com.banksystem.BankSystem.entities.users.BaseUser;
+import com.banksystem.BankSystem.entities.users.Customer;
 import com.banksystem.BankSystem.entities.users.UserCredentials;
 import com.banksystem.BankSystem.exceptions.UserNotFoundException;
 import com.banksystem.BankSystem.exceptions.credentials_exceptions.ResetCredentialsException;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -70,6 +72,10 @@ public abstract class BaseUserService<T extends BaseUser> {
             throw new UserNotFoundException("Provided User ID does not match any user");
         }
         return searchResult.get();
+    }
+
+    public Iterable<T> getAllUsers(){
+        return this.getUserRepository().findAll();
     }
 
     protected abstract BaseUserRepository<T> getUserRepository();

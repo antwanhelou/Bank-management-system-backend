@@ -11,7 +11,5 @@ import java.util.UUID;
 public interface BaseUserRepository<T extends BaseUser> extends JpaRepository<T, UUID> {
 
 
-    @Query()
-    Optional<T> findUserByUserCredentialsID(UUID userCredentialsID);
 
 }

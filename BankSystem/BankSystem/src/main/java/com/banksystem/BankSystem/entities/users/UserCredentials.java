@@ -20,8 +20,8 @@ public class UserCredentials {
 
     @Id
     @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", type = org.hibernate.id.uuid.UuidGenerator.class)
-    @Column(name = "user_credentials_id")
+    @GenericGenerator(name = "UUID", type = org.hibernate.id.uuid.UuidGenerator.class)
+    @Column(name = "id")
     private UUID id = UUID.randomUUID();
 
     @Column
@@ -34,7 +34,7 @@ public class UserCredentials {
     private String email;
 
     @OneToOne
-    @JoinColumn(name = "user_credentials_id")
+    @JoinColumn(name = "user_id")
     private BaseUser baseUser;
 
 }

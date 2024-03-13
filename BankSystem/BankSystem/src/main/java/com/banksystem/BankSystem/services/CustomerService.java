@@ -1,5 +1,6 @@
 package com.banksystem.BankSystem.services;
 
+import com.banksystem.BankSystem.DTOs.BaseUserDTO;
 import com.banksystem.BankSystem.DTOs.CustomerDTO;
 import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
 import com.banksystem.BankSystem.entities.users.Customer;
@@ -13,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CustomerService extends BaseUserService<Customer> {
@@ -27,44 +25,43 @@ public class CustomerService extends BaseUserService<Customer> {
     private CustomerRepository customerRepository;
 
 
-
-    public ResponseEntity<Map<String, String>> addCustomer(UserCredentialsDTO userCredentialsDTO) {
-        Customer customer = Customer.builder().build();
+    public ResponseEntity<Map<String, String>> addCustomer(final UserCredentialsDTO userCredentialsDTO) {
+        final Customer customer = Customer.builder().build();
         return this.registerUser(userCredentialsDTO, customer);
     }
-//    public Customer updateCustomer(UUID id, Customer customerDetails) {
-//    }
-    @Transactional
-    public Customer getCustomerWithAccounts(UUID customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found for this id :: " + customerId));
-        customer.getBankAccounts().size(); // Access the accounts to trigger their loading
-        return customer;
+
+
+    public ResponseEntity<Map<String, String>> updateCustomer(final BaseUserDTO baseUserDTO) throws UserNotFoundException {
+        return updateBaseUserDetails(baseUserDTO);
     }
 
-    @Transactional
-    public void deleteCustomer(UUID id) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found for this id :: " + id));
-        customerRepository.delete(customer);
+    public ResponseEntity<Map<String, String>> deleteCustomer(final BaseUserDTO baseUserDTO) throws UserNotFoundException {
+        return deleteBaseUser(baseUserDTO);
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public ResponseEntity<CustomerDTO> getCustomer(final UUID customerID) throws UserNotFoundException {
+        Customer customer = getUser(customerID);
+        CustomerDTO customerDTO = CustomerDTO.builder().build();
+        customerDTO.set(customer);
+        return new ResponseEntity<>(customerDTO, HttpStatus.OK);
     }
-//    public Optional<Customer> getCustomer(UUID id) {
-//        return customerRepository.findById(id);
-//    }
+
+    public ResponseEntity<Iterable<CustomerDTO>> getAllCustomer(){
+        Iterable<Customer> customers = this.getAllUsers();
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
+
+        for(Customer customer: customers){
+            CustomerDTO customerDTO = CustomerDTO.builder().build();
+            customerDTO.set(customer);
+            customerDTOS.add(customerDTO);
+        }
+        return new ResponseEntity<>(customerDTOS, HttpStatus.OK);
+    }
+
 
     @Override
     protected BaseUserRepository<Customer> getUserRepository() {
         return customerRepository;
     }
 
-    public ResponseEntity<CustomerDTO> getCustomer(final UUID id) throws UserNotFoundException {
-        final Customer customer = getUser(id);
-        CustomerDTO customerDTO = CustomerDTO.builder().build();
-        customerDTO.set(customer);
-        return new ResponseEntity<>(customerDTO, HttpStatus.OK);
-    }
 }

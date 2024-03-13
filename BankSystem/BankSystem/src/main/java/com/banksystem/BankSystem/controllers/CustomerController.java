@@ -40,10 +40,10 @@ public class CustomerController {
 //        return ResponseEntity.ok().body(customer);
 //    }
 
-    @GetMapping("/getAll")
-    public List<Customer> getAllCustomers() {
-        return customerService.getAllCustomers();
-    }
+//    @GetMapping("/getAll")
+//    public List<Customer> getAllCustomers() {
+//        return customerService.getAllCustomers();
+//    }
 
 //    @PutMapping("/updateCustomer/{id}")
 //    public ResponseEntity<Customer> updateCustomer(@PathVariable(value = "id") UUID id, @RequestBody Customer customerDetails) {
@@ -51,9 +51,9 @@ public class CustomerController {
 //        return ResponseEntity.ok(updatedCustomer);
 //    }
 
-    @DeleteMapping("/deleteCustomer/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable(value = "id") UUID id) {
-        customerService.deleteCustomer(id);
-        return ResponseEntity.ok().build();
-    }
+//    @DeleteMapping("/deleteCustomer/{id}")
+//    public ResponseEntity<Void> deleteCustomer(@PathVariable(value = "id") UUID id) {
+//        customerService.deleteCustomer(id);
+//        return ResponseEntity.ok().build();
+//    }
 }

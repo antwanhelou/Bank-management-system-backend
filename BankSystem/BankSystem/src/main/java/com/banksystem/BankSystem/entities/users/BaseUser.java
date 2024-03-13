@@ -10,19 +10,18 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Data
-
-@MappedSuperclass
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(of = "id")
-@ToString(of = {"id", "name", "email"})
+@ToString(of = {"id", "name"})
 abstract public class BaseUser implements Serializable{
 
     @Id
     @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", type = org.hibernate.id.uuid.UuidGenerator.class)
-    @Column(nullable = false)
+    @GenericGenerator(name = "UUID", type = org.hibernate.id.uuid.UuidGenerator.class)
+    @Column(nullable = false, name = "user_id")
     private UUID id;
 
     @Column
@@ -34,9 +33,9 @@ abstract public class BaseUser implements Serializable{
     @Column
     private boolean isVerified;
 
-    @Column
-    private String nationalID;
 
+    @Column
+    private String phoneNumber;
     @OneToOne(mappedBy = "baseUser", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private UserCredentials userCredentials;
 
