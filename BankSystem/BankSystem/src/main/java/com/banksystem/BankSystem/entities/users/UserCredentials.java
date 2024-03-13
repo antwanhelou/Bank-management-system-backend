@@ -26,7 +26,10 @@ public class UserCredentials {
 
     @Column
     private String userName;
-
+    @Column
+    private String verificationCode;
+    @Column
+    private boolean emailVerified = false;
     @Column
     private String password;
 

@@ -4,7 +4,6 @@ import com.banksystem.BankSystem.DTOs.BaseUserDTO;
 import com.banksystem.BankSystem.DTOs.NewUserCredentialsDTO;
 import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
 import com.banksystem.BankSystem.entities.users.BaseUser;
-import com.banksystem.BankSystem.entities.users.Customer;
 import com.banksystem.BankSystem.entities.users.UserCredentials;
 import com.banksystem.BankSystem.exceptions.UserNotFoundException;
 import com.banksystem.BankSystem.exceptions.credentials_exceptions.ResetCredentialsException;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,12 +23,14 @@ public abstract class BaseUserService<T extends BaseUser> {
 
     @Autowired
     private RegistrationService registrationService;
-
+    @Autowired
+    private EmailService emailService;
     @Transactional
     public ResponseEntity<Map<String, String>> registerUser(UserCredentialsDTO userCredentialsDTO, T baseUser){
         try {
-            UserCredentials userCredentials = registrationService.registerUser(userCredentialsDTO, baseUser);
+            UserCredentials userCredentials = registrationService.registerUser(userCredentialsDTO);
             baseUser.setUserCredentials(userCredentials);
+            emailService.sendWelcomeMessage(baseUser.getEmail(), "Welcome!","welcome to antwan and hussam");
             this.getUserRepository().save(baseUser);
             return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
         }catch (UserNameAlreadyExistsException e){

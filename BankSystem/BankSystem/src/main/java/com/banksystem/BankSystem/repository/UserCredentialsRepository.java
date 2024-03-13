@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserCredentialsRepository extends JpaRepository<UserCredentials, UUID> {
+    Optional<UserCredentials> findByEmail(String email);
 
     @Query("SELECT uc FROM UserCredentials uc " +
             "WHERE uc.userName = :userName " +
