@@ -32,8 +32,8 @@ public class AdminService extends BaseUserService<Admin> {
         return updateBaseUserDetails(baseUserDTO);
     }
 
-    public ResponseEntity<Map<String, String>> deleteAdmin(final BaseUserDTO baseUserDTO) throws UserNotFoundException {
-        return deleteBaseUser(baseUserDTO);
+    public ResponseEntity<Map<String, String>> deleteAdmin(final UUID id) throws UserNotFoundException {
+        return deleteBaseUser(id);
     }
 
     public ResponseEntity<AdminDTO> getAdmin(final UUID adminID) throws UserNotFoundException {

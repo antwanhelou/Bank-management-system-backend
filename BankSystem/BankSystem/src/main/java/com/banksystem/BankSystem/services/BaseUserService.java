@@ -58,9 +58,9 @@ public abstract class BaseUserService<T extends BaseUser> {
     }
 
 
-    public ResponseEntity<Map<String, String>> deleteBaseUser(BaseUserDTO baseUserDTO) throws UserNotFoundException {
+    public ResponseEntity<Map<String, String>> deleteBaseUser(final UUID id) throws UserNotFoundException {
 
-        final UUID id = baseUserDTO.getId();
+
         final T user = this.getUser(id);
         this.getUserRepository().delete(user);
         return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);

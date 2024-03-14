@@ -37,15 +37,13 @@ public class CustomerService extends BaseUserService<Customer> {
         return this.registerUser(userCredentialsDTO, customer);
     }
 
-    @Transactional
-    public void deleteCustomer(UUID id) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found for this id :: " + id));
-        customerRepository.delete(customer);
+    public ResponseEntity<Map<String, String>> updateCustomerDetails(CustomerDTO baseUserDTO) throws UserNotFoundException {
+        return updateBaseUserDetails(baseUserDTO);
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    @Transactional
+    public ResponseEntity<Map<String, String>> deleteCustomer(UUID id) throws UserNotFoundException {
+        return deleteBaseUser(id);
     }
 
     public ResponseEntity<Iterable<CustomerDTO>> getAllCustomer(){

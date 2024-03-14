@@ -1,9 +1,12 @@
 package com.banksystem.BankSystem.controllers;
 
 
+import com.banksystem.BankSystem.DTOs.BaseUserDTO;
+import com.banksystem.BankSystem.DTOs.CustomerDTO;
 import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
 import com.banksystem.BankSystem.entities.users.Customer;
 import com.banksystem.BankSystem.entities.users.UserCredentials;
+import com.banksystem.BankSystem.exceptions.UserNotFoundException;
 import com.banksystem.BankSystem.services.CustomerService;
 import com.banksystem.BankSystem.exceptions.CustomerAlreadyExists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,32 +31,32 @@ public class CustomerController {
     }
 
     @PostMapping("/addCustomer")
-    public ResponseEntity<Map<String, String>> createCustomer(@RequestBody UserCredentialsDTO userCredentials) throws CustomerAlreadyExists {
+    public ResponseEntity<Map<String, String>> createCustomer(@RequestBody final UserCredentialsDTO userCredentials) throws CustomerAlreadyExists {
         return customerService.addCustomer(userCredentials);
     }
 
+    @PostMapping("/updateCustomerDetails")
+    public ResponseEntity<Map<String, String>> updateCustomerDetails(@RequestBody final CustomerDTO baseUserDTO) throws UserNotFoundException {
+        return customerService.updateCustomerDetails(baseUserDTO);
+    }
 
-//    @GetMapping("/getCustomer/{id}")
-//    public ResponseEntity<Customer> getCustomerById(@PathVariable(value = "id") UUID id) {
-//        Customer customer = customerService.getCustomer(id)
-//                .orElseThrow(() -> new RuntimeException("Customer not found for this id :: " + id));
-//        return ResponseEntity.ok().body(customer);
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteCustomer(@PathVariable("id") final UUID id) throws UserNotFoundException {
+        return customerService.deleteCustomer(id);
+    }
 
-//    @GetMapping("/getAll")
-//    public List<Customer> getAllCustomers() {
-//        return customerService.getAllCustomers();
-//    }
+    @GetMapping("/getCustomer/{id}")
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("id") final UUID id) throws UserNotFoundException {
+        return customerService.getCustomer(id);
+    }
 
-//    @PutMapping("/updateCustomer/{id}")
-//    public ResponseEntity<Customer> updateCustomer(@PathVariable(value = "id") UUID id, @RequestBody Customer customerDetails) {
-//        Customer updatedCustomer = customerService.updateCustomer(id, customerDetails);
-//        return ResponseEntity.ok(updatedCustomer);
-//    }
+    @GetMapping("/getAllCustomers")
+    public ResponseEntity<Iterable<CustomerDTO>> getAllCustomers(){
+        return customerService.getAllCustomer();
+    }
 
-//    @DeleteMapping("/deleteCustomer/{id}")
-//    public ResponseEntity<Void> deleteCustomer(@PathVariable(value = "id") UUID id) {
-//        customerService.deleteCustomer(id);
-//        return ResponseEntity.ok().build();
-//    }
+
+
+
+
 }
