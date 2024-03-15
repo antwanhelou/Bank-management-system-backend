@@ -34,7 +34,6 @@ public class CustomerService extends BaseUserService<Customer> {
 
     public ResponseEntity<Map<String, String>> addCustomer(UserCredentialsDTO userCredentialsDTO) {
         Customer customer = Customer.builder().build();
-        emailService.sendWelcomeMessage(Customer.builder().build().getEmail(), "Welcome!","welcome to antwan and hussam");
         return this.registerUser(userCredentialsDTO, customer);
     }
 

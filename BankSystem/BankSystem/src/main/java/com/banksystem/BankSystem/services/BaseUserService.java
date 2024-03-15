@@ -30,13 +30,12 @@ public abstract class BaseUserService<T extends BaseUser> {
         try {
             UserCredentials userCredentials = registrationService.registerUser(userCredentialsDTO);
             baseUser.setUserCredentials(userCredentials);
-            emailService.sendWelcomeMessage(baseUser.getEmail(), "Welcome!","welcome to antwan and hussam");
+
             this.getUserRepository().save(baseUser);
             return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
         }catch (UserNameAlreadyExistsException e){
             return new ResponseEntity<>(ResultHolder.fail(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
-
     }
     public ResponseEntity<Map<String, String>> updateUserPassword(NewUserCredentialsDTO newUserCredentialsDTO){
         try{

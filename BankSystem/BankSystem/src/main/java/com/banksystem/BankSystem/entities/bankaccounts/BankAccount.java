@@ -1,5 +1,6 @@
 package com.banksystem.BankSystem.entities.bankaccounts;
 
+import com.banksystem.BankSystem.entities.loans.Loan;
 import com.banksystem.BankSystem.entities.transactions.Transaction;
 import com.banksystem.BankSystem.entities.creditcards.CreditCard;
 import com.banksystem.BankSystem.entities.users.Customer;
@@ -55,7 +56,8 @@ public abstract class BankAccount {
     @OneToMany(mappedBy = "bankAccount")
     private Set<Transaction> transactions;
 
-
+    @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL)
+    private Set<Loan> loans = new HashSet<>();
     private void init(){
         customers = new HashSet<>();
         creditCards = new HashSet<>();
