@@ -9,14 +9,17 @@ import com.banksystem.BankSystem.exceptions.credentials_exceptions.SameUserCrede
 import com.banksystem.BankSystem.exceptions.credentials_exceptions.UserNameAlreadyExistsException;
 import com.banksystem.BankSystem.exceptions.credentials_exceptions.WrongUserNameAndPasswordException;
 import com.banksystem.BankSystem.repository.UserCredentialsRepository;
+import com.banksystem.BankSystem.utilities.ResultHolder;
 import com.banksystem.BankSystem.utilities.VerificationCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
-
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,7 +33,6 @@ public class RegistrationService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailService emailService;
-
 
 
     public UserCredentials registerUser(UserCredentialsDTO userCredentialsDTO) throws UserNameAlreadyExistsException {
@@ -62,23 +64,7 @@ public class RegistrationService {
     }
 
 
-
-/*    public UserCredentials registerUser(UserCredentialsDTO userCredentialsDTO, BaseUser baseUser) throws UserNameAlreadyExistsException {
-        String userName = userCredentialsDTO.getUserName();
-        String password = userCredentialsDTO.getPassword();
-        String encodedPassword = passwordEncoder.encode(password);
-        Optional<UserCredentials> result = userCredentialsRepository.findByUserNameAndPassword(userName, encodedPassword);
-
-        if(result.isPresent()){
-            throw new UserNameAlreadyExistsException("User Name selected is already used.");
-        }
-        UserCredentials userCredentials = UserCredentials.builder().userName(userName).password(encodedPassword).build();
-        userCredentials.setBaseUser(baseUser);
-        userCredentialsRepository.save(userCredentials);
-        return userCredentials;
-    }*/
-
-    public void updateUserCredentials(NewUserCredentialsDTO newUserCredentialsDTO) throws ResetCredentialsException {
+    public ResponseEntity<Map<String, String>> updateUserCredentials(NewUserCredentialsDTO newUserCredentialsDTO) throws ResetCredentialsException {
         String userName = newUserCredentialsDTO.getUserName();
         String oldPassword = newUserCredentialsDTO.getOldPassword();
         String newPassword = newUserCredentialsDTO.getNewPassword();
@@ -97,6 +83,8 @@ public class RegistrationService {
         String encodedNewPassword = passwordEncoder.encode(newPassword);
         userCredentials.setPassword(encodedNewPassword);
         userCredentialsRepository.save(userCredentials);
+        return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
+
     }
 
 

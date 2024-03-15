@@ -12,6 +12,7 @@ import com.banksystem.BankSystem.repository.BaseUserRepository;
 import com.banksystem.BankSystem.repository.CustomerRepository;
 import com.banksystem.BankSystem.utilities.ResultHolder;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class CustomerService extends BaseUserService<Customer> {
         return deleteBaseUser(id);
     }
 
-    public ResponseEntity<Iterable<CustomerDTO>> getAllCustomer(){
+    public Iterable<CustomerDTO> getAllCustomer(){
         Iterable<Customer> customers = this.getAllUsers();
         List<CustomerDTO> customerDTOS = new ArrayList<>();
         for(Customer customer: customers){
@@ -54,7 +55,7 @@ public class CustomerService extends BaseUserService<Customer> {
             customerDTO.set(customer);
             customerDTOS.add(customerDTO);
         }
-        return new ResponseEntity<>(customerDTOS, HttpStatus.OK);
+        return customerDTOS;
     }
 
     public ResponseEntity<Iterable<BankAccountDTO>> getCustomerBankAccounts(final UUID customerID) throws UserNotFoundException {
@@ -85,5 +86,10 @@ public class CustomerService extends BaseUserService<Customer> {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
         customerDTO.set(customer);
         return new ResponseEntity<>(customerDTO, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Map<String, String>> requestBankAccount(BankAccountDTO bankAccountDTO){
+
+        return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
     }
 }

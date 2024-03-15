@@ -1,9 +1,6 @@
 package com.banksystem.BankSystem.repository;
 
-import com.banksystem.BankSystem.entities.users.Admin;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.banksystem.BankSystem.entities.users.Administrator;
 
-import java.util.UUID;
-
-public interface AdminRepository extends BaseUserRepository<Admin> {
+public interface AdminRepository extends BaseUserRepository<Administrator> {
 }

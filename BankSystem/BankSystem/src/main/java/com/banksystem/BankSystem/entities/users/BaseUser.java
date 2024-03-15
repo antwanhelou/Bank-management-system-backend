@@ -9,13 +9,16 @@ import org.hibernate.annotations.GenericGenerator;
 import java.io.Serializable;
 import java.util.UUID;
 
+
+
 @Data
+@SuperBuilder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-@EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "name"})
+
+@EqualsAndHashCode(of = "id")
 abstract public class BaseUser implements Serializable{
 
     @Id
