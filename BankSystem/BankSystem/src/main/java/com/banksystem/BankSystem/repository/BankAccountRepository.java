@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> {
+public interface BankAccountRepository<T extends BankAccount> extends JpaRepository<T, UUID> {
 
-    @Query("SELECT ba FROM BankAccount ba WHERE ba.accountNumber = :accountNumber")
     public Optional<BankAccount> findByBankAccountNumber(String accountNumber);
 }

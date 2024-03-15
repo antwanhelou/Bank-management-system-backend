@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -18,6 +19,10 @@ import java.util.Set;
 @Table(name = "admins")
 @Builder
 public class Administrator extends BaseUser{
+
+
+    @Column(name = "admin_id")
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     private AdminRole adminRole;

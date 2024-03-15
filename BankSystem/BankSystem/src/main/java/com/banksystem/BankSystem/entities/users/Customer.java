@@ -8,15 +8,18 @@ import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "customer")
+@Table(name = "customers")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Customer extends BaseUser{
 
+    @Column(name = "customer_id")
+    private UUID id;
 
     @JsonIgnoreProperties("customers")
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -30,5 +33,4 @@ public class Customer extends BaseUser{
                 .sum();
     }
 
-    //private String Balance;
 }

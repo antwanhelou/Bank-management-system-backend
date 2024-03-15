@@ -35,7 +35,6 @@ public class BankAccountDTO {
 
     private String branchCode;
 
-    private List<CreditCardDTO> creditCardDTOs;
 
     private List<TransactionDTO> transactionsDTOs;
 
@@ -48,12 +47,12 @@ public class BankAccountDTO {
         this.minimumBalance = bankAccount.getMinimumBalance();
         this.bankCode = bankAccount.getBankCode();
         this.branchCode = bankAccount.getBranchCode();
-        this.creditCardDTOs = new ArrayList<>();
-        for(CreditCard creditCard: bankAccount.getCreditCards()){
-            CreditCardDTO creditCardDTO = new CreditCardDTO();
-            creditCardDTO.set(creditCard);
-            this.creditCardDTOs.add(creditCardDTO);
-        }
+//        this.creditCardDTOs = new ArrayList<>();
+//        for(CreditCard creditCard: bankAccount.getCreditCards()){
+//            CreditCardDTO creditCardDTO = new CreditCardDTO();
+//            creditCardDTO.set(creditCard);
+//            this.creditCardDTOs.add(creditCardDTO);
+//        }
         this.transactionsDTOs = new ArrayList<>();
         for(Transaction transaction: bankAccount.getTransactions()){
             TransactionDTO transactionDTO = new TransactionDTO();

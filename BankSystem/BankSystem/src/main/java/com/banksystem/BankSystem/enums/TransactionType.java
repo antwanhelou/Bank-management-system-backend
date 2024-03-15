@@ -1,5 +1,5 @@
 package com.banksystem.BankSystem.enums;
 
 public enum TransactionType {
-    DEPOSIT, WITHDRAWAL, TRANSFER
+    DEPOSIT, WITHDRAWAL, TRANSFER, FEE
 }

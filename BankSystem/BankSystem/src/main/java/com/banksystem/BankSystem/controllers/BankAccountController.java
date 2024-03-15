@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.banksystem.BankSystem.services.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/accounts")
 public class BankAccountController {
@@ -19,6 +21,13 @@ public class BankAccountController {
         this.bankAccountService = bankAccountService;
 
     }
+
+
+//    @PostMapping("/createBankAccount")
+//    public ResponseEntity<BankAccountDTO> createBankAccount(@RequestParam final UUID customerID) {
+//        return bankAccountService.createBankAccount(customerID);
+//    }
+
 //    @PostMapping("/createBankAccount")
 //    public ResponseEntity<BankAccountDTO> createBankAccount()
 }

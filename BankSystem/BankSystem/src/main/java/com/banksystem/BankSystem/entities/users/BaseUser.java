@@ -17,6 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(of = {"id", "name"})
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 
 @EqualsAndHashCode(of = "id")
 abstract public class BaseUser implements Serializable{

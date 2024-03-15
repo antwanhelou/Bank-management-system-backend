@@ -1,6 +1,7 @@
 package com.banksystem.BankSystem.entities.creditcards;
 
 import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
+import com.banksystem.BankSystem.entities.bankaccounts.IndividualBankAccount;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -31,7 +32,7 @@ public abstract class CreditCard {
     @JoinColumn(
             name = "account_id"
     )
-    private BankAccount bankAccount;
+    private IndividualBankAccount bankAccount;
 
 
 

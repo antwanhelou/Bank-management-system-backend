@@ -47,5 +47,8 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
+    @Column
+    private UUID customerID;
+
 }
 

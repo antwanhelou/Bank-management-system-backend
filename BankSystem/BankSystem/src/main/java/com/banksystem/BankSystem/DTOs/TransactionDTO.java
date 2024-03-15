@@ -21,6 +21,8 @@ public class TransactionDTO {
 
     private Currency currency;
 
+    private UUID customerID;
+
     public void set(Transaction transaction){
         this.id = transaction.getId();
         this.transactionDate = transaction.getTransactionDate();
@@ -28,6 +30,7 @@ public class TransactionDTO {
         this.transactionType = transaction.getTransactionType();
         this.description = transaction.getDescription();
         this.currency = transaction.getCurrency();
+        this.customerID = transaction.getCustomerID();
     }
 
 }
