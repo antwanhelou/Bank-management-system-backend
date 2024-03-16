@@ -1,9 +1,6 @@
 package com.banksystem.BankSystem.services;
 
-import com.banksystem.BankSystem.DTOs.BankAccountDTO;
-import com.banksystem.BankSystem.DTOs.BaseUserDTO;
-import com.banksystem.BankSystem.DTOs.CustomerDTO;
-import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
+import com.banksystem.BankSystem.DTOs.*;
 import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import com.banksystem.BankSystem.entities.users.Customer;
 import com.banksystem.BankSystem.exceptions.UserNotFoundException;
@@ -16,18 +13,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
 public class CustomerService extends BaseUserService<Customer> {
-
-
 
     @Autowired
     private CustomerRepository customerRepository;
 
     @Autowired
     private EmailService emailService;
+
+
 
 
     public ResponseEntity<Map<String, String>> addCustomer(UserCredentialsDTO userCredentialsDTO) {
@@ -63,13 +61,12 @@ public class CustomerService extends BaseUserService<Customer> {
         Customer customer = searchResult.get();
         List<BankAccountDTO> bankAccountDTOS = new ArrayList<>();
         for(BankAccount bankAccount: customer.getBankAccounts()){
-            BankAccountDTO bankAccountDTO = BankAccountDTO.builder().build();
+            BankAccountDTO bankAccountDTO = new BankAccountDTO();
             bankAccountDTO.set(bankAccount);
             bankAccountDTOS.add(bankAccountDTO);
         }
 
         return new ResponseEntity<>(bankAccountDTOS, HttpStatus.OK);
-
 
     }
 
@@ -89,4 +86,16 @@ public class CustomerService extends BaseUserService<Customer> {
 
         return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
     }
+
+    public void saveCustomer(Customer customer){
+        this.customerRepository.save(customer);
+    }
+
+    public Iterable<Customer> findCustomersByIDs(Iterable<UUID> customerIDs){
+        return this.customerRepository.findAllById(customerIDs);
+    }
+
+
+
+
 }

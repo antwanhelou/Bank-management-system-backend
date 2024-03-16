@@ -28,7 +28,7 @@ public class EmailService {
         emailSender.send(message);
     }
 
-    public void sendVerficationMessage(String to, String subject, String text) {
+    public void sendVerificationMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("helou527@gmail.com");
         message.setTo(to);

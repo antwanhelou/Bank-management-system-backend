@@ -1,22 +1,28 @@
 package com.banksystem.BankSystem.services;
 
-import com.banksystem.BankSystem.DTOs.BankAccountDTO;
+import com.banksystem.BankSystem.DTOs.*;
 import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import com.banksystem.BankSystem.entities.loans.Loan;
 import com.banksystem.BankSystem.entities.users.Customer;
-import com.banksystem.BankSystem.enums.LoanStatus;
+import com.banksystem.BankSystem.enums.AccountStatus;
+import com.banksystem.BankSystem.exceptions.BankAccountNotFoundException;
+import com.banksystem.BankSystem.exceptions.CloseAccountException;
+import com.banksystem.BankSystem.exceptions.UserNotFoundException;
+import com.banksystem.BankSystem.repository.CustomerRepository;
 import com.banksystem.BankSystem.repository.LoanRepository;
+import com.banksystem.BankSystem.utilities.Constants;
+import com.banksystem.BankSystem.utilities.ResultHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.banksystem.BankSystem.repository.BankAccountRepository;
 
-import com.banksystem.BankSystem.repository.CustomerRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -24,40 +30,74 @@ import java.util.UUID;
 @Service
 public abstract class BankAccountService<T extends BankAccount> {
 
+    @Autowired
+    private  LoanRepository loanRepository;
 
-//    public ResponseEntity<>
+    @Autowired
+    protected CustomerService customerService;
 
-        // Set the relationship
-        bankAccount.getCustomers().add(customer); // Make sure Account's getCustomers() is initialized properly
-        customer.getBankAccounts().add(bankAccount); // Ensure bi-directional consistency
 
-        // Save the account, which should cascade the relationship update if cascading is configured
-        return bankAccountRepository.save(bankAccount);
-    }
-    @Scheduled(cron = "0 0 0 1 * ?") // Runs at 00:00:00 on the first day of every month
-    public void processMonthlyLoanRepayments() {
-        LocalDate today = LocalDate.now();
-        LocalDate firstDayOfMonth = today.withDayOfMonth(1);
-        List<Loan> loansToRepay = loanRepository.findLoansDueForRepaymentByDate(firstDayOfMonth);
-
-        for (Loan loan : loansToRepay) {
-            if (!loan.isPaid()) {
-                // Assuming you have a method to calculate the repayment amount
-                BigDecimal repaymentAmount = calculateRepaymentAmount(loan);
-                try {
-                    makeLoanRepayment(loan.getBankAccount().getId(), loan.getId(), repaymentAmount);
-                    // Log success or additional actions as necessary
-                } catch (Exception e) {
-                    // Log failure for auditing and further investigation
-                }
-            }
+    public T findBankAccount(final UUID accountID) throws BankAccountNotFoundException {
+        Optional<T> searchResult = this.getRepository().findById(accountID);
+        if(searchResult.isEmpty()){
+            throw new BankAccountNotFoundException("Cannot find Bank Account with ID: " + accountID);
         }
+        return searchResult.get();
     }
-    /**
-     * Calculates the monthly repayment amount for a loan using simple interest.
-     * @param loan the loan to calculate the repayment for
-     * @return the monthly repayment amount
-     */
+    public ResponseEntity<Map<String, String>> suspendAccount(final UUID accountID) throws BankAccountNotFoundException {
+        T account = this.findBankAccount(accountID);
+        account.setAccountStatus(AccountStatus.SUSPENDED);
+        return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Map<String, String>> activateAccount(final UUID accountID) throws BankAccountNotFoundException {
+        T account = this.findBankAccount(accountID);
+        account.setAccountStatus(AccountStatus.ACTIVE);
+        return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
+    }
+
+    public abstract ResponseEntity<Map<String, String>> closeAccount(final UUID accountID) throws BankAccountNotFoundException, CloseAccountException;
+
+    public abstract BankAccountRepository<T> getRepository();
+    public abstract ResponseEntity<BankAccountDTO> createBankAccount(final CreateBankAccountRequestDTO requestDTO) throws UserNotFoundException;
+
+    protected void completeBankAccountDetails(T bankAccount, CreateBankAccountRequestDTO requestDTO) throws UserNotFoundException {
+        bankAccount.init();
+        Customer owner = customerService.getUser(requestDTO.getOwnerID());
+        bankAccount.setOwner(owner);
+        bankAccount.setMinimumBalance(requestDTO.getMinimumBalance());
+        bankAccount.setAccountNumber(this.generateUniqueRandomBankAccountNumber());
+        bankAccount.setAccountStatus(AccountStatus.ACTIVE);
+        bankAccount.setBalance(new BigDecimal(Constants.INITIAL_BANK_ACCOUNT_BALANCE));
+        bankAccount.setBankCode(Constants.BANK_CODE);
+        bankAccount.setBranchCode(Constants.BRANCH_NUMBER);
+        this.getRepository().save(bankAccount);
+        customerService.saveCustomer(owner);
+    }
+    public abstract ResponseEntity<TransactionDTO> transferMoney(TransferRequestDTO request);
+
+//    public abstract ResponseEntity<Map<String, String>> closeBankAccount();
+
+
+//    @Scheduled(cron = "0 0 0 1 * ?") // Runs at 00:00:00 on the first day of every month
+//    public void processMonthlyLoanRepayments() {
+//        LocalDate today = LocalDate.now();
+//        LocalDate firstDayOfMonth = today.withDayOfMonth(1);
+//        List<Loan> loansToRepay = loanRepository.findLoansDueForRepaymentByDate(firstDayOfMonth);
+//
+//        for (Loan loan : loansToRepay) {
+//            if (!loan.isPaid()) {
+//                // Assuming you have a method to calculate the repayment amount
+//                BigDecimal repaymentAmount = calculateRepaymentAmount(loan);
+//                try {
+//                    makeLoanRepayment((T) loan.getBankAccount(), loan.getId(), repaymentAmount);
+//                    // Log success or additional actions as necessary
+//                } catch (Exception e) {
+//                    // Log failure for auditing and further investigation
+//                }
+//            }
+//        }
+//    }
     public BigDecimal calculateRepaymentAmount(Loan loan) {
         BigDecimal interest = loan.getAmount()
                 .multiply(loan.getInterestRate())
@@ -68,15 +108,14 @@ public abstract class BankAccountService<T extends BankAccount> {
         BigDecimal totalRepayable = loan.getAmount().add(interest);
         return totalRepayable.divide(new BigDecimal(loan.getTerm()), RoundingMode.HALF_UP);
     }
-    public BankAccount makeLoanRepayment(UUID accountId, UUID loanId, BigDecimal repaymentAmount) {
+
+    public void makeLoanRepayment(T bankAccount, UUID loanId, BigDecimal repaymentAmount) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new RuntimeException("Loan not found for this id :: " + loanId));
 
         if (loan.isPaid()) {
             throw new RuntimeException("This loan is already paid off.");
         }
-
-        BankAccount bankAccount = loan.getBankAccount();
 
         // Calculate the actual repayment amount to ensure it does not exceed the remaining loan amount
         BigDecimal actualRepaymentAmount = repaymentAmount.compareTo(loan.getAmount()) > 0 ? loan.getAmount() : repaymentAmount;
@@ -93,22 +132,11 @@ public abstract class BankAccountService<T extends BankAccount> {
             loan.setAmount(newLoanAmount);
         }
 
-        loanRepository.save(loan); // Save the updated loan state
-
-        // Update the bank account's balance if necessary
-        // Assuming you want to adjust the bank account balance based on the repayment, add your logic here
-
-        return bankAccountRepository.save(bankAccount); // Save the updated bank account state
+        loanRepository.save(loan);
+        this.getRepository().save(bankAccount);
     }
 
-
-
-
-
-
-    public Loan provideLoanToCustomer(UUID accountId, BigDecimal amount, BigDecimal interestRate, LocalDate dueDate) {
-        BankAccount bankAccount = bankAccountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("BankAccount not found for this id :: " + accountId));
+    public Loan provideLoanToCustomer(T bankAccount, BigDecimal amount, BigDecimal interestRate, LocalDate dueDate) {
 
         Loan loan = new Loan();
         loan.setAmount(amount);
@@ -117,17 +145,17 @@ public abstract class BankAccountService<T extends BankAccount> {
         loan.setBankAccount(bankAccount);
 
         bankAccount.getLoans().add(loan);
-        bankAccountRepository.save(bankAccount);
+        this.getRepository().save(bankAccount);
 
         return loan; // Assuming you have a Loan repository or manage it through BankAccount
     }
-    public String generateUniqueRandomBankAccountNumber(){
+    private String generateUniqueRandomBankAccountNumber(){
         String characters = "0123456789";
 
         StringBuilder sb = new StringBuilder();
 
         Random random = new Random();
-        Optional<BankAccount> bankAccounts = this.getRepository().findByBankAccountNumber("aa");
+        Optional<BankAccount> bankAccounts = this.getRepository().findByAccountNumber("aa");
         // Generate 12 random characters and append them to the StringBuilder
         for (int i = 0; i < 13; i++) {
             int randomIndex = random.nextInt(characters.length());
@@ -140,6 +168,9 @@ public abstract class BankAccountService<T extends BankAccount> {
     }
 
 
-
+    public ResponseEntity<TransactionDTO> deposit(DepositDTO request){
+        String currency = request.getCurrency();
+        return null;
+    }
 
 }

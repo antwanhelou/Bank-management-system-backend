@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 @Data
 @Entity
@@ -26,7 +27,7 @@ public abstract class CreditCard {
     private String cardNumber;
 
     @Column(nullable = false)
-    private double creditLimit;
+    private BigDecimal creditLimit;
 
     @ManyToOne
     @JoinColumn(

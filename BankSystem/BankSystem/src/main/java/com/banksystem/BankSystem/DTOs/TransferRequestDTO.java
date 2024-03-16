@@ -6,19 +6,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class LoanDTO {
+public class TransferRequestDTO {
+
+    private UUID customerID;
+
+    private UUID fromBankAccount;
+
+    private UUID toBankAccount;
 
     private BigDecimal amount;
-    private UUID accountId;
-    private boolean isPaid;
-    private BigDecimal interestRate;
-    private LocalDate dueDate;
+
 
 }

@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +17,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Builder
 public class BankAccountDTO {
 
     private UUID id;
@@ -27,14 +27,13 @@ public class BankAccountDTO {
 
     private AccountStatus accountStatus;
 
-    private double balance;
+    private BigDecimal balance;
 
-    private double minimumBalance;
+    private BigDecimal minimumBalance;
 
     private String bankCode;
 
     private String branchCode;
-
 
     private List<TransactionDTO> transactionsDTOs;
 
@@ -47,12 +46,7 @@ public class BankAccountDTO {
         this.minimumBalance = bankAccount.getMinimumBalance();
         this.bankCode = bankAccount.getBankCode();
         this.branchCode = bankAccount.getBranchCode();
-//        this.creditCardDTOs = new ArrayList<>();
-//        for(CreditCard creditCard: bankAccount.getCreditCards()){
-//            CreditCardDTO creditCardDTO = new CreditCardDTO();
-//            creditCardDTO.set(creditCard);
-//            this.creditCardDTOs.add(creditCardDTO);
-//        }
+
         this.transactionsDTOs = new ArrayList<>();
         for(Transaction transaction: bankAccount.getTransactions()){
             TransactionDTO transactionDTO = new TransactionDTO();

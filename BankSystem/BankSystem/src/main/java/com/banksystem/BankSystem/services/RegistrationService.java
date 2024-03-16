@@ -21,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class RegistrationService {
@@ -58,7 +57,7 @@ public class RegistrationService {
 
         // Send the welcome message along with the verification code
         String emailBody = "Welcome to AnHus Bank! Please verify your email using this code: " + verificationCode;
-        emailService.sendVerficationMessage(userCredentials.getEmail(), "Email Verification", emailBody);
+        emailService.sendVerificationMessage(userCredentials.getEmail(), "Email Verification", emailBody);
 
         return savedCredentials;
     }

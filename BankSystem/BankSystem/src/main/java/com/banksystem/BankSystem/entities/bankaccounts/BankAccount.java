@@ -11,6 +11,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Data
@@ -35,10 +36,10 @@ public abstract class BankAccount {
     private AccountStatus accountStatus;
 
     @Column(nullable = false)
-    private double balance;
+    private BigDecimal balance;
 
     @Column(nullable = false)
-    private double minimumBalance;
+    private BigDecimal minimumBalance;
 
     @Column(nullable = false)
     private String bankCode;
@@ -46,21 +47,28 @@ public abstract class BankAccount {
     @Column(nullable = false)
     private String branchCode;
 
+
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Customer owner;
+
+
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToMany(mappedBy = "bankAccounts", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<Customer> customers;
+    protected Set<Customer> customers;
 
     @OneToMany(mappedBy = "bankAccount")
     private Set<Transaction> transactions;
 
     @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL)
-    private Set<Loan> loans = new HashSet<>();
-    private void init(){
-        customers = new HashSet<>();
+    private Set<Loan> loans;
+
+
+    public void init(){
         transactions = new HashSet<>();
+        loans = new HashSet<>();
     }
 
 }

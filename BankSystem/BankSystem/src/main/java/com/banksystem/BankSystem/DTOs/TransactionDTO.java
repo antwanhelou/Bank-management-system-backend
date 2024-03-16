@@ -3,17 +3,26 @@ package com.banksystem.BankSystem.DTOs;
 import com.banksystem.BankSystem.entities.transactions.Transaction;
 import com.banksystem.BankSystem.enums.Currency;
 import com.banksystem.BankSystem.enums.TransactionType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
 public class TransactionDTO {
 
     private UUID id;
 
     private Instant transactionDate;
 
-    private double amount;
+    private BigDecimal amount;
 
     private TransactionType transactionType;
 

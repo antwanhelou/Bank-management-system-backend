@@ -17,7 +17,6 @@ import java.util.*;
 @Service
 public class AdministratorService extends BaseUserService<Administrator> {
 
-
     @Autowired
     AdminRepository adminRepository;
 

@@ -2,6 +2,7 @@ package com.banksystem.BankSystem.DTOs;
 
 import com.banksystem.BankSystem.entities.creditcards.CreditCard;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class CreditCardDTO {
@@ -10,7 +11,7 @@ public class CreditCardDTO {
 
     private String cardNumber;
 
-    private double creditLimit;
+    private BigDecimal creditLimit;
 
 
     public void set(CreditCard creditCard){

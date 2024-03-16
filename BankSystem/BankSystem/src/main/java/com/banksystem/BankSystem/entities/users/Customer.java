@@ -28,9 +28,10 @@ public class Customer extends BaseUser{
             inverseJoinColumns = @JoinColumn(name = "account_id"))
     private Set<BankAccount> bankAccounts = new HashSet<>();
     public double getTotalBalance() {
-        return this.bankAccounts.stream()
-                .mapToDouble(BankAccount::getBalance) // Assuming BankAccount has a getBalance method
-                .sum();
+        return 0;
+//        return this.bankAccounts.stream()
+//                .mapToDouble(BankAccount::getBalance) // Assuming BankAccount has a getBalance method
+//                .sum();
     }
 
 }

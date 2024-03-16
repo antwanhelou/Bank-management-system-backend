@@ -46,13 +46,10 @@ public class CustomerController {
         return new ResponseEntity<>(customerService.getAllCustomer(), HttpStatus.OK);
     }
 
-
     @PostMapping("/requestBankAccount")
     public ResponseEntity<Map<String, String>> requestBankAccount(@RequestBody BankAccountDTO bankAccountDTO){
         return customerService.requestBankAccount(bankAccountDTO);
 
-
     }
-
 
 }

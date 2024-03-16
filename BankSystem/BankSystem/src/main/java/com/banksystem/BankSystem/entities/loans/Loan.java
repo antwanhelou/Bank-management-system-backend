@@ -18,14 +18,31 @@ public class Loan {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "UUID", type = org.hibernate.id.uuid.UuidGenerator.class)
     private UUID id;
+
     @Enumerated(EnumType.STRING)
     private LoanStatus status = LoanStatus.ACTIVE;
+
+    @Column
     private boolean isPaid = false;
+
+    @Column
     private BigDecimal amount; // The initial loan amount
+
+    @Column
     private BigDecimal interestRate; // Yearly interest rate
+
+    @Column
     private int term; // Duration of the loan in months
+
+    @Column
     private BigDecimal monthlyRepaymentAmount; // You might store this if it's fixed for all installments
+
+    @Column
     private LocalDate dueDate;
+
+    @Column
+    private BigDecimal repaid;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private BankAccount bankAccount;
 
