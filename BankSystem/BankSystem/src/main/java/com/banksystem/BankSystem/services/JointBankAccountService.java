@@ -60,9 +60,9 @@ public class JointBankAccountService extends BankAccountService<JointBankAccount
         return new ResponseEntity<>(bankAccountDTO, HttpStatus.OK);
     }
 
-    @Override
+    /*@Override
     public ResponseEntity<TransactionDTO> transferMoney(TransferRequestDTO request) {
         return null;
-    }
+    }*/
 
 }

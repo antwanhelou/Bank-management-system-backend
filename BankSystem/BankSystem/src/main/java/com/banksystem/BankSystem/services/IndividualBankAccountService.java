@@ -11,6 +11,7 @@ import com.banksystem.BankSystem.exceptions.UserNotFoundException;
 import com.banksystem.BankSystem.repository.BankAccountRepository;
 import com.banksystem.BankSystem.repository.IndividualBankAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@Primary
 public class IndividualBankAccountService extends BankAccountService<IndividualBankAccount>{
 
     @Autowired
@@ -70,10 +72,10 @@ public class IndividualBankAccountService extends BankAccountService<IndividualB
         return new ResponseEntity<>(bankAccountDTO, HttpStatus.OK);
     }
 
-    @Override
+   /* @Override
     public ResponseEntity<TransactionDTO> transferMoney(TransferRequestDTO request) {
         return null;
-    }
+    }*/
 
 
 }
