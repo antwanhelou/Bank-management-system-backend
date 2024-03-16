@@ -16,6 +16,7 @@ import com.banksystem.BankSystem.repository.JointBankAccountRepository;
 import com.banksystem.BankSystem.repository.SavingBankAccountRepository;
 import com.banksystem.BankSystem.utilities.ResultHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Primary
 public class IndividualBankAccountService extends BankAccountService<IndividualBankAccount>{
 
     @Autowired

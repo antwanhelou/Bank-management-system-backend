@@ -75,6 +75,18 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version> <!-- Make sure you are using a version that supports the -parameters flag -->
+				<configuration>
+					<release>17</release> <!-- Use the <release> tag for Java 9 and above -->
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 

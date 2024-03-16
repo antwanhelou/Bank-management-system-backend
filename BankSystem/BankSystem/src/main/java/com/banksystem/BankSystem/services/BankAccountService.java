@@ -3,13 +3,15 @@ package com.banksystem.BankSystem.services;
 import com.banksystem.BankSystem.DTOs.*;
 import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import com.banksystem.BankSystem.entities.loans.Loan;
+import com.banksystem.BankSystem.entities.transactions.Transaction;
 import com.banksystem.BankSystem.entities.users.Customer;
 import com.banksystem.BankSystem.enums.AccountStatus;
 import com.banksystem.BankSystem.exceptions.BankAccountNotFoundException;
 import com.banksystem.BankSystem.exceptions.CloseAccountException;
+import com.banksystem.BankSystem.exceptions.InsufficientFundsException;
 import com.banksystem.BankSystem.exceptions.UserNotFoundException;
-import com.banksystem.BankSystem.repository.CustomerRepository;
 import com.banksystem.BankSystem.repository.LoanRepository;
+import com.banksystem.BankSystem.repository.TransactionRepository;
 import com.banksystem.BankSystem.utilities.Constants;
 import com.banksystem.BankSystem.utilities.ResultHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +30,20 @@ import java.util.Random;
 import java.util.UUID;
 
 @Service
+
 public abstract class BankAccountService<T extends BankAccount> {
 
     @Autowired
     private  LoanRepository loanRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Autowired
     protected CustomerService customerService;
+    @Autowired
+    private CurrencyService currencyService;
+    @Autowired
+    private BankAccountRepository<BankAccount> bankAccountRepository;
 
     @Autowired
     private BankAccountRepository bankAccountRepository;
@@ -173,9 +182,111 @@ public abstract class BankAccountService<T extends BankAccount> {
     }
 
 
-    public ResponseEntity<TransactionDTO> deposit(DepositDTO request){
-        String currency = request.getCurrency();
-        return null;
+
+
+    public ResponseEntity<TransactionDTO> depositMoney(DepositDTO depositDTO) throws Throwable {
+        BankAccount account = bankAccountRepository.findById(depositDTO.getBankAccountID())
+                .orElseThrow(() -> new RuntimeException("Bank account not found"));
+
+        BigDecimal amountInNIS;
+
+        // Check if the currency is already ILS to skip conversion
+        if ("ILS".equals(depositDTO.getCurrency())) {
+            amountInNIS = depositDTO.getAmount();
+        } else {
+            // Convert deposit amount to NIS if not already in ILS
+            amountInNIS = currencyService.convertCurrency(depositDTO.getAmount(), depositDTO.getCurrency(), "ILS");
+        }
+
+        // Update account balance
+        account.setBalance(account.getBalance().add(amountInNIS));
+
+        // Create and save the transaction
+        Transaction transaction = new Transaction();
+        transaction.setBankAccount(account);
+        transaction.setAmount(amountInNIS); // Record the transaction amount
+      // Assuming you have a type field to distinguish between transactions
+        transactionRepository.save(transaction);
+        bankAccountRepository.save(account);
+
+        // Convert the saved transaction to a TransactionDTO and return it
+         // Implement this method to map your Transaction entity to TransactionDTO
+        return new ResponseEntity<TransactionDTO>( HttpStatus.OK);
+    }
+
+    public BigDecimal viewBalance(UUID accountId) {
+        BankAccount bankAccount = bankAccountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found for this id :: " + accountId));
+        return bankAccount.getBalance();
+    }
+
+    public void transferMoney(TransferRequestDTO transferRequestDTO) throws BankAccountNotFoundException, InsufficientFundsException {
+        BankAccount fromAccount = bankAccountRepository.findById(transferRequestDTO.getFromBankAccount())
+                .orElseThrow(() -> new BankAccountNotFoundException("Source bank account not found"));
+
+        BankAccount toAccount = bankAccountRepository.findById(transferRequestDTO.getToBankAccount())
+                .orElseThrow(() -> new BankAccountNotFoundException("Destination bank account not found"));
+
+        BigDecimal transferAmount = transferRequestDTO.getAmount();
+
+        // Optional: Convert transfer amount if you're handling multiple currencies and if necessary
+        // transferAmount = currencyService.convertCurrency(transferAmount, fromCurrency, toCurrency);
+
+        // Check for sufficient funds in the fromAccount
+        if (fromAccount.getBalance().compareTo(transferAmount) < 0) {
+            throw new InsufficientFundsException("Insufficient funds for transfer");
+        }
+
+        // Deduct the amount from the fromAccount
+        fromAccount.setBalance(fromAccount.getBalance().subtract(transferAmount));
+
+        // Add the amount to the toAccount
+        toAccount.setBalance(toAccount.getBalance().add(transferAmount));
+
+        // Save the updated account states
+        bankAccountRepository.save(fromAccount);
+        bankAccountRepository.save(toAccount);
+
+        // Record the transaction in both accounts
+        recordTransaction(fromAccount, transferAmount.negate(), "Transfer Out");
+        recordTransaction(toAccount, transferAmount, "Transfer In");
+    }
+
+    private void recordTransaction(BankAccount account, BigDecimal amount, String type) {
+        Transaction transaction = new Transaction();
+        transaction.setBankAccount(account);
+        transaction.setAmount(amount); // Negative for withdrawals
+        // This could be "Deposit", "Withdrawal", or "Transfer"
+        transactionRepository.save(transaction);
+    }
+
+    public ResponseEntity<TransactionDTO> withdrawMoney(DepositDTO withdrawDTO) throws BankAccountNotFoundException {
+        BankAccount account = bankAccountRepository.findById(withdrawDTO.getBankAccountID())
+                .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found"));
+
+        BigDecimal withdrawalAmount = withdrawDTO.getAmount();
+
+        // Optional: Convert withdrawal amount if in a foreign currency
+        if (!"ILS".equals(withdrawDTO.getCurrency())) { // Assuming account balance is in NIS
+            withdrawalAmount = currencyService.convertCurrency(withdrawalAmount, withdrawDTO.getCurrency(), "ILS");
+        }
+
+        // Check for sufficient funds
+        if (account.getBalance().compareTo(BigDecimal.valueOf(withdrawalAmount.doubleValue())) < 0) {
+            throw new InsufficientFundsException("Insufficient funds for withdrawal");
+        }
+
+        // Update the account balance
+        account.setBalance(account.getBalance().subtract(withdrawalAmount));
+        bankAccountRepository.save(account);
+
+        // Record the transaction
+        Transaction transaction = new Transaction();
+        transaction.setBankAccount(account);
+        transaction.setAmount(withdrawalAmount.negate()); // Use negative amount for withdrawal
+         // Assume you have a type or similar property
+        transactionRepository.save(transaction);
+        return new ResponseEntity<TransactionDTO>( HttpStatus.OK);
     }
 
 //    protected BankAccount getBankAccount(final UUID bankAccount){

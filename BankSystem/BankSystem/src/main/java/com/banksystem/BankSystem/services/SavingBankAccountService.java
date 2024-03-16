@@ -50,14 +50,14 @@ public class SavingBankAccountService extends BankAccountService<SavingBankAccou
         return new ResponseEntity<>(bankAccountDTO, HttpStatus.OK);
     }
 
-    @Override
+   /* @Override
     public ResponseEntity<TransactionDTO> transferMoney(TransferRequestDTO request) {
         return null;
-    }
+    }*/
 
 
     @Override
-    public ResponseEntity<TransactionDTO> deposit(DepositDTO request){
+    public ResponseEntity<TransactionDTO> depositMoney(DepositDTO request){
         throw new IllegalArgumentException();
 
     }
