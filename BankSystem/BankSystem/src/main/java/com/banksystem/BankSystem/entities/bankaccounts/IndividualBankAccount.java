@@ -16,7 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "individual_bank_accounts")
 public class IndividualBankAccount extends BankAccount{
 
     @OneToMany(mappedBy = "bankAccount")

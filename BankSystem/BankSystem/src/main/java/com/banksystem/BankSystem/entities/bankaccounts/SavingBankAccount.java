@@ -16,7 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "saving_bank_accounts")
 
 public class SavingBankAccount extends BankAccount{
 

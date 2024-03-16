@@ -18,7 +18,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "joint_bank_accounts")
 
 public class JointBankAccount extends BankAccount{
 

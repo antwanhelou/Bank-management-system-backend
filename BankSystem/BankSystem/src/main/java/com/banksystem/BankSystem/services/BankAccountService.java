@@ -36,13 +36,16 @@ public abstract class BankAccountService<T extends BankAccount> {
     @Autowired
     protected CustomerService customerService;
 
+    @Autowired
+    private BankAccountRepository bankAccountRepository;
+
 
     public T findBankAccount(final UUID accountID) throws BankAccountNotFoundException {
-        Optional<T> searchResult = this.getRepository().findById(accountID);
+        Optional<BankAccount> searchResult = this.getRepository().findById(accountID);
         if(searchResult.isEmpty()){
             throw new BankAccountNotFoundException("Cannot find Bank Account with ID: " + accountID);
         }
-        return searchResult.get();
+        return (T) searchResult.get();
     }
     public ResponseEntity<Map<String, String>> suspendAccount(final UUID accountID) throws BankAccountNotFoundException {
         T account = this.findBankAccount(accountID);
@@ -58,7 +61,9 @@ public abstract class BankAccountService<T extends BankAccount> {
 
     public abstract ResponseEntity<Map<String, String>> closeAccount(final UUID accountID) throws BankAccountNotFoundException, CloseAccountException;
 
-    public abstract BankAccountRepository<T> getRepository();
+    public BankAccountRepository getRepository(){
+        return this.bankAccountRepository;
+    }
     public abstract ResponseEntity<BankAccountDTO> createBankAccount(final CreateBankAccountRequestDTO requestDTO) throws UserNotFoundException;
 
     protected void completeBankAccountDetails(T bankAccount, CreateBankAccountRequestDTO requestDTO) throws UserNotFoundException {
@@ -74,7 +79,7 @@ public abstract class BankAccountService<T extends BankAccount> {
         this.getRepository().save(bankAccount);
         customerService.saveCustomer(owner);
     }
-    public abstract ResponseEntity<TransactionDTO> transferMoney(TransferRequestDTO request);
+    public abstract ResponseEntity<TransactionDTO> transferMoney(TransferRequestDTO request) throws BankAccountNotFoundException;
 
 //    public abstract ResponseEntity<Map<String, String>> closeBankAccount();
 
@@ -172,5 +177,10 @@ public abstract class BankAccountService<T extends BankAccount> {
         String currency = request.getCurrency();
         return null;
     }
+
+//    protected BankAccount getBankAccount(final UUID bankAccount){
+//
+//
+//    }
 
 }

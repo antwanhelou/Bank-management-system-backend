@@ -3,16 +3,19 @@ package com.banksystem.BankSystem.services;
 import com.banksystem.BankSystem.DTOs.*;
 import com.banksystem.BankSystem.entities.bankaccounts.JointBankAccount;
 import com.banksystem.BankSystem.entities.bankaccounts.SavingBankAccount;
+import com.banksystem.BankSystem.enums.AccountStatus;
 import com.banksystem.BankSystem.exceptions.BankAccountNotFoundException;
 import com.banksystem.BankSystem.exceptions.CloseAccountException;
 import com.banksystem.BankSystem.exceptions.UserNotFoundException;
 import com.banksystem.BankSystem.repository.BankAccountRepository;
 import com.banksystem.BankSystem.repository.SavingBankAccountRepository;
+import com.banksystem.BankSystem.utilities.ResultHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 @Service
@@ -23,7 +26,14 @@ public class SavingBankAccountService extends BankAccountService<SavingBankAccou
 
     @Override
     public ResponseEntity<Map<String, String>> closeAccount(UUID accountID) throws BankAccountNotFoundException, CloseAccountException {
-        return null;
+        SavingBankAccount account = this.findBankAccount(accountID);
+        if(account.getBalance().compareTo(BigDecimal.valueOf(0)) > 0){
+            throw new CloseAccountException("Cannot Close Account, You need to withdraw your balance");
+        }else if(account.getBalance().compareTo(BigDecimal.valueOf(0)) < 0){
+            throw new CloseAccountException("Cannot Close Account, You have debts!");
+        }
+        account.setAccountStatus(AccountStatus.CLOSED);
+        return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
     }
 
     @Override

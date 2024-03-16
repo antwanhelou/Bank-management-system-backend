@@ -2,8 +2,10 @@ package com.banksystem.BankSystem.services;
 
 
 import com.banksystem.BankSystem.DTOs.*;
+import com.banksystem.BankSystem.entities.bankaccounts.IndividualBankAccount;
 import com.banksystem.BankSystem.entities.bankaccounts.JointBankAccount;
 import com.banksystem.BankSystem.entities.users.Customer;
+import com.banksystem.BankSystem.enums.AccountStatus;
 import com.banksystem.BankSystem.exceptions.BankAccountNotFoundException;
 import com.banksystem.BankSystem.exceptions.CloseAccountException;
 import com.banksystem.BankSystem.exceptions.UserNotFoundException;
@@ -11,6 +13,8 @@ import com.banksystem.BankSystem.repository.BankAccountRepository;
 import com.banksystem.BankSystem.repository.CustomerRepository;
 import com.banksystem.BankSystem.repository.JointBankAccountRepository;
 import com.banksystem.BankSystem.utilities.Constants;
+import com.banksystem.BankSystem.utilities.ResultHolder;
+import org.hibernate.mapping.Join;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +39,19 @@ public class JointBankAccountService extends BankAccountService<JointBankAccount
 
 
     @Override
-    public ResponseEntity<Map<String, String>> closeAccount(UUID accountID) throws BankAccountNotFoundException, CloseAccountException {
-        return null;
+    public ResponseEntity<Map<String, String>> closeAccount(final UUID accountID) throws BankAccountNotFoundException, CloseAccountException {
+        JointBankAccount account = this.findBankAccount(accountID);
+        if(account.getBalance().compareTo(BigDecimal.valueOf(0)) > 0){
+            throw new CloseAccountException("Cannot Close Account, You need to withdraw your balance");
+        }else if(account.getBalance().compareTo(BigDecimal.valueOf(0)) < 0){
+            throw new CloseAccountException("Cannot Close Account, You have debts!");
+        }
+        if(!account.getAssociatedBankAccounts().isEmpty()){
+            throw new CloseAccountException("Cannot Close Account, You still have open save accounts, Please close them first!");
+        }
+        account.setAccountStatus(AccountStatus.CLOSED);
+        return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
+
     }
 
     @Override

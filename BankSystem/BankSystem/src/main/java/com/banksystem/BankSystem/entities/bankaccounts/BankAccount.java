@@ -20,7 +20,8 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(of = {"id", "accountNumber", "balance"})
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name = "bank_accounts")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class BankAccount {
 
     @Id
