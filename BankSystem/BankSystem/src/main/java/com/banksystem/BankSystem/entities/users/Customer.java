@@ -2,6 +2,7 @@ package com.banksystem.BankSystem.entities.users;
 
 
 import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
+import com.banksystem.BankSystem.entities.schedule.CustomerRequest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +21,10 @@ public class Customer extends BaseUser{
 
     @Column(name = "customer_id")
     private UUID id;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+    private Set<CustomerRequest> customerRequest;
+
 
     @JsonIgnoreProperties("customers")
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

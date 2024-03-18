@@ -1,4 +1,4 @@
-package com.banksystem.BankSystem.beans;
+package com.banksystem.BankSystem.beans.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

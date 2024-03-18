@@ -3,6 +3,8 @@ package com.banksystem.BankSystem.services;
 
 import com.banksystem.BankSystem.DTOs.NewUserCredentialsDTO;
 import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
+import com.banksystem.BankSystem.entities.otp.OTP;
+import com.banksystem.BankSystem.entities.users.BaseUser;
 import com.banksystem.BankSystem.entities.users.UserCredentials;
 import com.banksystem.BankSystem.exceptions.credentials_exceptions.ResetCredentialsException;
 import com.banksystem.BankSystem.exceptions.credentials_exceptions.SameUserCredentialsException;
@@ -33,32 +35,23 @@ public class RegistrationService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private VerificationService verificationService;
 
-    public UserCredentials registerUser(UserCredentialsDTO userCredentialsDTO) throws UserNameAlreadyExistsException {
-        // Check if the username already exists
+
+    public UserCredentials registerUser(BaseUser user, UserCredentialsDTO userCredentialsDTO) throws UserNameAlreadyExistsException {
         Optional<UserCredentials> existingUser = userCredentialsRepository.findByUserName(userCredentialsDTO.getUserName());
         if (existingUser.isPresent()) {
             throw new UserNameAlreadyExistsException("User Name selected is already used.");
         }
-
-        // Create a new UserCredentials instance
         UserCredentials userCredentials = new UserCredentials();
         userCredentials.setUserName(userCredentialsDTO.getUserName());
         userCredentials.setPassword(passwordEncoder.encode(userCredentialsDTO.getPassword()));
         userCredentials.setEmail(userCredentialsDTO.getEmail());
-
-        // Generate a unique verification code
-        String verificationCode = VerificationCodeUtil.generateVerificationCode();
-        userCredentials.setVerificationCode(verificationCode);
-        userCredentials.setEmailVerified(false); // Email is not verified initially
-
-        // Save the user credentials with the verification code
+        user.setVerified(false);
+        userCredentials.setBaseUser(user);
         UserCredentials savedCredentials = userCredentialsRepository.save(userCredentials);
-
-        // Send the welcome message along with the verification code
-        String emailBody = "Welcome to AnHus Bank! Please verify your email using this code: " + verificationCode;
-        emailService.sendVerificationMessage(userCredentials.getEmail(), "Email Verification", emailBody);
-
+        verificationService.sendOTP(userCredentials.getEmail());
         return savedCredentials;
     }
 

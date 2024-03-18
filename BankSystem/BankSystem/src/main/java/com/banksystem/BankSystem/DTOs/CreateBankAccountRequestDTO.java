@@ -1,5 +1,6 @@
 package com.banksystem.BankSystem.DTOs;
 
+import com.banksystem.BankSystem.enums.AccountType;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,6 +16,8 @@ public class CreateBankAccountRequestDTO {
 
     private List<UUID> customersIDs;
 
-    private UUID associatedBankAccount;
+    private AccountType accountType;
+
+    private String associatedBankAccountNumber;
 
 }

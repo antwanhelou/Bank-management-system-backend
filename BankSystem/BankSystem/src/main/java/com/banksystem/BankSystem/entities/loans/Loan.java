@@ -3,7 +3,10 @@ package com.banksystem.BankSystem.entities.loans;
 import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import com.banksystem.BankSystem.enums.LoanStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
@@ -12,6 +15,10 @@ import java.util.UUID;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "loans")
+@Builder
 public class Loan {
 
     @Id

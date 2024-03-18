@@ -1,12 +1,14 @@
 package com.banksystem.BankSystem.entities.users;
 
 import com.banksystem.BankSystem.DTOs.BaseUserDTO;
+import com.banksystem.BankSystem.entities.schedule.CustomerRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -45,6 +47,8 @@ abstract public class BaseUser implements Serializable{
     private String phoneNumber;
     @OneToOne(mappedBy = "baseUser", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private UserCredentials userCredentials;
+
+
 
 
     public void set(BaseUserDTO baseUserDTO){

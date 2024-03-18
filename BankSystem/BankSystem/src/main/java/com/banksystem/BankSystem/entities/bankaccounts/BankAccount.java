@@ -60,15 +60,32 @@ public abstract class BankAccount {
     @ManyToMany(mappedBy = "bankAccounts", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     protected Set<Customer> customers;
 
-    @OneToMany(mappedBy = "bankAccount")
-    private Set<Transaction> transactions;
+    @OneToMany(mappedBy = "fromBankAccount")
+    private Set<Transaction> fromBankAccountTransactions;
+
+    @OneToMany(mappedBy = "toBankAccount")
+    private Set<Transaction> toBankAccountTransactions;
 
     @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL)
     private Set<Loan> loans;
 
 
+    public void addLoan(Loan loan){
+        this.loans.add(loan);
+    }
+
+    public void addFromBankAccountTransaction(Transaction transaction){
+        this.fromBankAccountTransactions.add(transaction);
+    }
+
+    public void addToBankAccountTransaction(Transaction transaction){
+        this.toBankAccountTransactions.add(transaction);
+    }
+
+
     public void init(){
-        transactions = new HashSet<>();
+        fromBankAccountTransactions = new HashSet<>();
+        toBankAccountTransactions = new HashSet<>();
         loans = new HashSet<>();
     }
 

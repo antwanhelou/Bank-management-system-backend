@@ -4,6 +4,7 @@ import com.banksystem.BankSystem.DTOs.NewUserCredentialsDTO;
 import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
 import com.banksystem.BankSystem.exceptions.CustomerAlreadyExists;
 import com.banksystem.BankSystem.exceptions.credentials_exceptions.ResetCredentialsException;
+import com.banksystem.BankSystem.exceptions.credentials_exceptions.UserNameAlreadyExistsException;
 import com.banksystem.BankSystem.services.AdministratorService;
 import com.banksystem.BankSystem.services.CustomerService;
 import com.banksystem.BankSystem.services.RegistrationService;
@@ -37,12 +38,12 @@ public class UserRegistrationController {
 
 
     @PostMapping("/registerCustomer")
-    public ResponseEntity<Map<String, String>> createCustomer(@RequestBody final UserCredentialsDTO userCredentials) throws CustomerAlreadyExists {
+    public ResponseEntity<Map<String, String>> createCustomer(@RequestBody final UserCredentialsDTO userCredentials) throws CustomerAlreadyExists, UserNameAlreadyExistsException {
         return customerService.addCustomer(userCredentials);
     }
 
     @PostMapping("/registerAdministrator")
-    public ResponseEntity<Map<String, String>> createAdmin(@RequestBody final UserCredentialsDTO userCredentials) throws CustomerAlreadyExists {
+    public ResponseEntity<Map<String, String>> createAdmin(@RequestBody final UserCredentialsDTO userCredentials) throws CustomerAlreadyExists, UserNameAlreadyExistsException {
         return administratorService.addAdmin(userCredentials);
     }
 

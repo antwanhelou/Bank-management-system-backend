@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/verification")
 public class VerificationController {
 
     @Autowired
     private UserCredentialsRepository userCredentialsRepository;
 
-    @PostMapping("/verifyEmail")
+    @PostMapping("/generateVerificationCode")
     public ResponseEntity<?> verifyEmail(@RequestBody EmailVerificationDTO verificationDTO) {
         Optional<UserCredentials> userOpt = userCredentialsRepository.findByEmail(verificationDTO.getEmail());
         if (userOpt.isPresent()) {

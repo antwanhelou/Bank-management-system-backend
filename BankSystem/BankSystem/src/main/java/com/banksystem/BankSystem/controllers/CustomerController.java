@@ -1,8 +1,8 @@
 package com.banksystem.BankSystem.controllers;
 
-import com.banksystem.BankSystem.DTOs.BankAccountDTO;
+import com.banksystem.BankSystem.DTOs.CreateBankAccountRequestDTO;
 import com.banksystem.BankSystem.DTOs.CustomerDTO;
-import com.banksystem.BankSystem.exceptions.UserNotFoundException;
+import com.banksystem.BankSystem.exceptions.object_not_found.UserNotFoundException;
 import com.banksystem.BankSystem.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class CustomerController {
 
     @GetMapping("/getCustomer/{id}")
     public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("id") final UUID id) throws UserNotFoundException {
-        return customerService.getCustomer(id);
+        return customerService.getCustomerDetails(id);
     }
 
     @GetMapping("/getAllCustomers")
@@ -47,8 +47,8 @@ public class CustomerController {
     }
 
     @PostMapping("/requestBankAccount")
-    public ResponseEntity<Map<String, String>> requestBankAccount(@RequestBody BankAccountDTO bankAccountDTO){
-        return customerService.requestBankAccount(bankAccountDTO);
+    public ResponseEntity<Map<String, String>> requestBankAccount(@RequestBody CreateBankAccountRequestDTO request) throws UserNotFoundException {
+        return customerService.requestBankAccount(request);
 
     }
 

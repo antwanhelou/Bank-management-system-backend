@@ -4,9 +4,7 @@ import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import com.banksystem.BankSystem.enums.Currency;
 import com.banksystem.BankSystem.enums.TransactionType;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 
@@ -19,8 +17,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "transactions")
-@EqualsAndHashCode(of = {"id"})
-
+@EqualsAndHashCode(of = {"description"})
+@Builder
+@AllArgsConstructor
 public class Transaction {
 
     @Id
@@ -30,8 +29,13 @@ public class Transaction {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
-    private BankAccount bankAccount;
+    @JoinColumn(name = "to_bank_account", nullable = false)
+    private BankAccount toBankAccount;
+
+    @ManyToOne
+    @JoinColumn(name = "from_bank_account")
+    private BankAccount fromBankAccount;
+
 
     @Column(nullable = false)
     private Instant transactionDate;

@@ -3,7 +3,8 @@ package com.banksystem.BankSystem.services;
 import com.banksystem.BankSystem.DTOs.*;
 import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import com.banksystem.BankSystem.entities.users.Customer;
-import com.banksystem.BankSystem.exceptions.UserNotFoundException;
+import com.banksystem.BankSystem.exceptions.credentials_exceptions.UserNameAlreadyExistsException;
+import com.banksystem.BankSystem.exceptions.object_not_found.UserNotFoundException;
 import com.banksystem.BankSystem.repository.BaseUserRepository;
 import com.banksystem.BankSystem.repository.CustomerRepository;
 import com.banksystem.BankSystem.utilities.ResultHolder;
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -28,7 +28,7 @@ public class CustomerService extends BaseUserService<Customer> {
 
 
 
-    public ResponseEntity<Map<String, String>> addCustomer(UserCredentialsDTO userCredentialsDTO) {
+    public ResponseEntity<Map<String, String>> addCustomer(UserCredentialsDTO userCredentialsDTO) throws UserNameAlreadyExistsException {
         Customer customer = Customer.builder().build();
         return this.registerUser(userCredentialsDTO, customer);
     }
@@ -75,14 +75,16 @@ public class CustomerService extends BaseUserService<Customer> {
         return customerRepository;
     }
 
-    public ResponseEntity<CustomerDTO> getCustomer(final UUID id) throws UserNotFoundException {
-        final Customer customer = getUser(id);
+    public ResponseEntity<CustomerDTO> getCustomerDetails(final UUID id) throws UserNotFoundException {
+        final Customer customer = this.getUser(id);
         CustomerDTO customerDTO = CustomerDTO.builder().build();
         customerDTO.set(customer);
         return new ResponseEntity<>(customerDTO, HttpStatus.OK);
     }
 
-    public ResponseEntity<Map<String, String>> requestBankAccount(BankAccountDTO bankAccountDTO){
+    public ResponseEntity<Map<String, String>> requestBankAccount(final CreateBankAccountRequestDTO requestDTO) throws UserNotFoundException {
+        final UUID customerID = requestDTO.getOwnerID();
+        Customer customer = this.getUser(customerID);
 
         return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
     }

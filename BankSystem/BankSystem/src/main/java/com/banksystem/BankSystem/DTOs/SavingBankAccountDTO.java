@@ -20,9 +20,11 @@ public class SavingBankAccountDTO extends BankAccountDTO{
 
     private boolean isActive;
 
+    private String associateBankAccountNumber;
     public void set(SavingBankAccount savingBankAccount){
         super.set(savingBankAccount);
         this.monthlySaveAmount = savingBankAccount.getMonthlySaveAmount();
+        this.associateBankAccountNumber = savingBankAccount.getAssociateBankAccountNumber();
     }
 
 }

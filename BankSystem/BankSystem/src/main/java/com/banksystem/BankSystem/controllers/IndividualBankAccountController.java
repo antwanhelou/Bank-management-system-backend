@@ -1,16 +1,16 @@
 package com.banksystem.BankSystem.controllers;
 
 
-import com.banksystem.BankSystem.DTOs.BankAccountDTO;
-import com.banksystem.BankSystem.DTOs.CreateBankAccountRequestDTO;
-import com.banksystem.BankSystem.exceptions.BankAccountNotFoundException;
-import com.banksystem.BankSystem.exceptions.UserNotFoundException;
+import com.banksystem.BankSystem.DTOs.*;
+import com.banksystem.BankSystem.exceptions.*;
+import com.banksystem.BankSystem.exceptions.object_not_found.BankAccountNotFoundException;
+import com.banksystem.BankSystem.exceptions.object_not_found.UserNotFoundException;
 import com.banksystem.BankSystem.services.IndividualBankAccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/individualAccounts")
@@ -29,9 +29,35 @@ public class IndividualBankAccountController {
         return individualBankAccountService.createBankAccount(requestDTO);
     }
 
-    @DeleteMapping("/suspendAccount/{accountID}")
-    public ResponseEntity<Map<String, String>> suspendAccount(@PathVariable UUID accountID) throws BankAccountNotFoundException {
-        return individualBankAccountService.suspendAccount(accountID);
+    @DeleteMapping("/suspendAccount/{accountNumber}")
+    public ResponseEntity<Map<String, String>> suspendAccount(@PathVariable final String accountNumber) throws BankAccountNotFoundException {
+        return individualBankAccountService.suspendAccount(accountNumber);
     }
+
+    @PostMapping("/deposit")
+    public ResponseEntity<TransactionDTO> deposit(@RequestBody final DepositOrWithdrawDTO depositDTO) throws BankSystemException {
+        return individualBankAccountService.depositMoney(depositDTO);
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<TransactionDTO> withdraw(@RequestBody final DepositOrWithdrawDTO withdrawDTO) throws BankSystemException {
+        return individualBankAccountService.withdrawMoney(withdrawDTO);
+    }
+
+    @GetMapping("/balance/{accountNumber}")
+    public ResponseEntity<BigDecimal> viewBalance(@PathVariable final String accountNumber) throws BankAccountNotFoundException {
+        return individualBankAccountService.viewBalance(accountNumber);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<TransactionDTO> transferMoney(@RequestBody final TransferRequestDTO transferRequestDTO) throws BankAccountNotFoundException, InsufficientBalanceException {
+        return individualBankAccountService.transferMoney(transferRequestDTO);
+    }
+
+    @DeleteMapping("/close/{accountNumber}")
+    public ResponseEntity<Map<String, String>> closeAccount(@PathVariable final String accountNumber) throws BankAccountNotFoundException, CloseAccountException {
+        return individualBankAccountService.closeAccount(accountNumber);
+    }
+
 
 }

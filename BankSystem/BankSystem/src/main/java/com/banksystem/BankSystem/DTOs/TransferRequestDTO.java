@@ -1,5 +1,6 @@
 package com.banksystem.BankSystem.DTOs;
 
+import com.banksystem.BankSystem.enums.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,11 +17,12 @@ public class TransferRequestDTO {
 
     private UUID customerID;
 
-    private UUID fromBankAccount;
+    private String fromBankAccount;
 
-    private UUID toBankAccount;
+    private String toBankAccount;
 
     private BigDecimal amount;
+
 
 
 }

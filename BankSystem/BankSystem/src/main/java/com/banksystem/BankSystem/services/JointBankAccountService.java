@@ -2,29 +2,27 @@ package com.banksystem.BankSystem.services;
 
 
 import com.banksystem.BankSystem.DTOs.*;
-import com.banksystem.BankSystem.entities.bankaccounts.IndividualBankAccount;
+import com.banksystem.BankSystem.entities.bankaccounts.BankAccount;
 import com.banksystem.BankSystem.entities.bankaccounts.JointBankAccount;
+import com.banksystem.BankSystem.entities.transactions.Transaction;
 import com.banksystem.BankSystem.entities.users.Customer;
 import com.banksystem.BankSystem.enums.AccountStatus;
-import com.banksystem.BankSystem.exceptions.BankAccountNotFoundException;
-import com.banksystem.BankSystem.exceptions.CloseAccountException;
-import com.banksystem.BankSystem.exceptions.UserNotFoundException;
+import com.banksystem.BankSystem.enums.Currency;
+import com.banksystem.BankSystem.enums.TransactionType;
+import com.banksystem.BankSystem.exceptions.*;
+import com.banksystem.BankSystem.exceptions.object_not_found.BankAccountNotFoundException;
+import com.banksystem.BankSystem.exceptions.object_not_found.UserNotFoundException;
 import com.banksystem.BankSystem.repository.BankAccountRepository;
-import com.banksystem.BankSystem.repository.CustomerRepository;
 import com.banksystem.BankSystem.repository.JointBankAccountRepository;
 import com.banksystem.BankSystem.utilities.Constants;
 import com.banksystem.BankSystem.utilities.ResultHolder;
-import org.hibernate.mapping.Join;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class JointBankAccountService extends BankAccountService<JointBankAccount> {
@@ -39,8 +37,8 @@ public class JointBankAccountService extends BankAccountService<JointBankAccount
 
 
     @Override
-    public ResponseEntity<Map<String, String>> closeAccount(final UUID accountID) throws BankAccountNotFoundException, CloseAccountException {
-        JointBankAccount account = this.findBankAccount(accountID);
+    public ResponseEntity<Map<String, String>> closeAccount(final String accountNumber) throws BankAccountNotFoundException, CloseAccountException {
+        JointBankAccount account = this.findBankAccount(accountNumber);
         if(account.getBalance().compareTo(BigDecimal.valueOf(0)) > 0){
             throw new CloseAccountException("Cannot Close Account, You need to withdraw your balance");
         }else if(account.getBalance().compareTo(BigDecimal.valueOf(0)) < 0){
@@ -51,7 +49,6 @@ public class JointBankAccountService extends BankAccountService<JointBankAccount
         }
         account.setAccountStatus(AccountStatus.CLOSED);
         return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
-
     }
 
     @Override
@@ -75,9 +72,42 @@ public class JointBankAccountService extends BankAccountService<JointBankAccount
         return new ResponseEntity<>(bankAccountDTO, HttpStatus.OK);
     }
 
-    /*@Override
-    public ResponseEntity<TransactionDTO> transferMoney(TransferRequestDTO request) {
-        return null;
-    }*/
+    @Override
+    public ResponseEntity<TransactionDTO> transferMoney(TransferRequestDTO request) throws BankSystemException {
+        final String depositBankID = request.getToBankAccount();
+        final String withdrawalBankID = request.getFromBankAccount();
+        final BigDecimal amount = request.getAmount();
+        JointBankAccount withdrawalBank = this.findBankAccount(withdrawalBankID);
+        Optional<BankAccount> depositBankSearchResult = this.getRepository().findByAccountNumberAllTables(depositBankID);
+        if(depositBankSearchResult.isEmpty()){
+            throw new BankAccountNotFoundException("Cannot find Bank Account with number : " + depositBankID);
+        }
+        BankAccount depositBankAccount = depositBankSearchResult.get();
+        if(withdrawalBank.getBalance().compareTo(amount) < 0){
+            throw new InsufficientBalanceException("You Do Not Have The Desired Transfer Amount!");
+        }
+        if(depositBankAccount.getAccountStatus() != AccountStatus.ACTIVE){
+            throw new BankSystemException("Bank Account with Number " + depositBankID + " Is not Active");
+        }
+        if(withdrawalBank.getAccountStatus() != AccountStatus.ACTIVE){
+            throw new BankSystemException("Bank Account with Number " + withdrawalBankID + " Is not Active");
+        }
+
+        Transaction transaction = Transaction.builder().build();
+        transaction.setAmount(request.getAmount());
+        transaction.setTransactionType(TransactionType.TRANSFER);
+        transaction.setToBankAccount(withdrawalBank);
+        transaction.setFromBankAccount(depositBankAccount);
+        transaction.setCurrency(Currency.ILS);
+        transaction.setCustomerID(request.getCustomerID());
+        transaction.setDescription("Transferred " + request.getAmount().toString() +
+                " From Account Number " + request.getFromBankAccount() + " To Account Number "
+                + request.getToBankAccount());
+
+        TransactionDTO transactionDTO = TransactionDTO.builder().build();
+        transactionDTO.set(transaction);
+        return new ResponseEntity<>(transactionDTO, HttpStatus.OK);
+    }
+
 
 }

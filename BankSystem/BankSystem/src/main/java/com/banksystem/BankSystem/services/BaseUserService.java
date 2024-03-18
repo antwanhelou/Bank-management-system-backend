@@ -5,7 +5,7 @@ import com.banksystem.BankSystem.DTOs.NewUserCredentialsDTO;
 import com.banksystem.BankSystem.DTOs.UserCredentialsDTO;
 import com.banksystem.BankSystem.entities.users.BaseUser;
 import com.banksystem.BankSystem.entities.users.UserCredentials;
-import com.banksystem.BankSystem.exceptions.UserNotFoundException;
+import com.banksystem.BankSystem.exceptions.object_not_found.UserNotFoundException;
 import com.banksystem.BankSystem.exceptions.credentials_exceptions.ResetCredentialsException;
 import com.banksystem.BankSystem.exceptions.credentials_exceptions.UserNameAlreadyExistsException;
 import com.banksystem.BankSystem.repository.BaseUserRepository;
@@ -26,22 +26,20 @@ public abstract class BaseUserService<T extends BaseUser> {
     @Autowired
     private EmailService emailService;
     @Transactional
-    public ResponseEntity<Map<String, String>> registerUser(UserCredentialsDTO userCredentialsDTO, T baseUser){
-        try {
-            UserCredentials userCredentials = registrationService.registerUser(userCredentialsDTO);
-            baseUser.setUserCredentials(userCredentials);
+    public ResponseEntity<Map<String, String>> registerUser(UserCredentialsDTO userCredentialsDTO, T baseUser) throws UserNameAlreadyExistsException {
 
-            this.getUserRepository().save(baseUser);
-            return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
-        }catch (UserNameAlreadyExistsException e){
-            return new ResponseEntity<>(ResultHolder.fail(e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
+        UserCredentials userCredentials = registrationService.registerUser(baseUser, userCredentialsDTO);
+        baseUser.setUserCredentials(userCredentials);
+
+        this.getUserRepository().save(baseUser);
+        return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
+
+
     }
     public ResponseEntity<Map<String, String>> updateUserPassword(NewUserCredentialsDTO newUserCredentialsDTO){
         try{
             registrationService.updateUserCredentials(newUserCredentialsDTO);
             return new ResponseEntity<>(ResultHolder.success(), HttpStatus.OK);
-
         } catch (ResetCredentialsException e) {
             return new ResponseEntity<>(ResultHolder.fail(e.getMessage()), HttpStatus.BAD_REQUEST);
         }

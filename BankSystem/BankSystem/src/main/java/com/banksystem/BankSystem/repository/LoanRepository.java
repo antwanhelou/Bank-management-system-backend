@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface LoanRepository extends JpaRepository<Loan, UUID> {
-    @Query("SELECT l FROM Loan l WHERE l.dueDate <= :date")
+    @Query("SELECT l FROM Loan l WHERE l.dueDate <= :date AND l.isPaid = false")
     List<Loan> findLoansDueForRepaymentByDate(LocalDate date);
 
 

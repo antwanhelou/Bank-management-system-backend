@@ -1,20 +1,27 @@
 package com.banksystem.BankSystem.DTOs;
 
+import com.banksystem.BankSystem.enums.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class RepaymentDTO {
-    private BigDecimal repaymentAmount;
-    private UUID accountId;
-    private UUID loanId;
+public class DepositOrWithdrawDTO {
+
+    private UUID customerID;
+
+    private String bankAccountNumber;
+
+    private BigDecimal amount;
+
+    private Currency currency;
+
 }

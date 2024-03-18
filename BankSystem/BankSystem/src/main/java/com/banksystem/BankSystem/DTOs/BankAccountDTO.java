@@ -48,7 +48,12 @@ public class BankAccountDTO {
         this.branchCode = bankAccount.getBranchCode();
 
         this.transactionsDTOs = new ArrayList<>();
-        for(Transaction transaction: bankAccount.getTransactions()){
+        for(Transaction transaction: bankAccount.getToBankAccountTransactions()){
+            TransactionDTO transactionDTO = new TransactionDTO();
+            transactionDTO.set(transaction);
+            this.transactionsDTOs.add(transactionDTO);
+        }
+        for(Transaction transaction: bankAccount.getFromBankAccountTransactions()){
             TransactionDTO transactionDTO = new TransactionDTO();
             transactionDTO.set(transaction);
             this.transactionsDTOs.add(transactionDTO);

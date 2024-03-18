@@ -2,7 +2,7 @@ package com.banksystem.BankSystem.controllers;
 
 import com.banksystem.BankSystem.DTOs.AdministratorDTO;
 import com.banksystem.BankSystem.DTOs.CustomerDTO;
-import com.banksystem.BankSystem.exceptions.UserNotFoundException;
+import com.banksystem.BankSystem.exceptions.object_not_found.UserNotFoundException;
 import com.banksystem.BankSystem.services.AdministratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class AdministratorController {
         return administratorService.deleteAdministrator(id);
     }
 
-    @GetMapping("/getCustomer/{id}")
+    @GetMapping("/getAdministrator/{id}")
     public ResponseEntity<AdministratorDTO> getAdministrator(@PathVariable("id") final UUID id) throws UserNotFoundException {
         return administratorService.getAdministrator(id);
     }
@@ -39,6 +39,7 @@ public class AdministratorController {
     public ResponseEntity<Iterable<AdministratorDTO>> getAllAdministrators(){
         return administratorService.getAllAdministrators();
     }
+
 
 
 

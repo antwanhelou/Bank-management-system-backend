@@ -34,5 +34,9 @@ public class Administrator extends BaseUser{
     @Column
     private Set<Task> tasks;
 
+    public void addTask(Task task){
+        this.tasks.add(task);
+    }
+
 
 }

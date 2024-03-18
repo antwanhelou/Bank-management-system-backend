@@ -1,15 +1,14 @@
 package com.banksystem.BankSystem.entities.bankaccounts;
 
+import com.banksystem.BankSystem.enums.AccountType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -23,6 +22,8 @@ public class SavingBankAccount extends BankAccount{
     private BigDecimal monthlySaveAmount;
 
     @Column
-    private UUID associateBankAccount;
+    private String associateBankAccountNumber;
 
+    @Column
+    private AccountType associatedType;
 }

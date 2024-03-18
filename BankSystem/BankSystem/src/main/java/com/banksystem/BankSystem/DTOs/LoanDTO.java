@@ -1,5 +1,6 @@
 package com.banksystem.BankSystem.DTOs;
 
+import com.banksystem.BankSystem.entities.loans.Loan;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +17,18 @@ import java.util.UUID;
 public class LoanDTO {
 
     private BigDecimal amount;
-    private UUID accountId;
+    private String accountNumber;
     private boolean isPaid;
     private BigDecimal interestRate;
     private LocalDate dueDate;
+
+
+    public void set(Loan loan){
+        this.amount = loan.getAmount();
+        this.accountNumber = loan.getBankAccount().getAccountNumber();
+        this.isPaid = loan.isPaid();
+        this.interestRate = loan.getInterestRate();
+        this.dueDate = loan.getDueDate();
+    }
 
 }
